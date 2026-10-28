@@ -1,0 +1,38 @@
+{
+ "google_client_id": "demo-cid",
+ "clients": [
+  {
+   "id": "demo-1",
+   "name": "Pinewood Stays",
+   "api_url": "https://script.google.com/macros/s/DEMO1/exec",
+   "since": "2025-11",
+   "dashboard_url": "../dashboard/",
+   "manager_url": "../dashboard/manager/",
+   "bot_url": "",
+   "repo": "",
+   "color": "#1d5bd8"
+  },
+  {
+   "id": "demo-2",
+   "name": "Parvati Valley Homes",
+   "api_url": "https://script.google.com/macros/s/DEMO2/exec",
+   "since": "2025-11",
+   "dashboard_url": "",
+   "manager_url": "",
+   "bot_url": "",
+   "repo": "",
+   "color": "#0f8a6a"
+  },
+  {
+   "id": "demo-3",
+   "name": "Ridge & Pine Shimla",
+   "api_url": "https://script.google.com/macros/s/DEMO3/exec",
+   "since": "2025-11",
+   "dashboard_url": "",
+   "manager_url": "",
+   "bot_url": "",
+   "repo": "",
+   "color": "#b4462f"
+  }
+ ]
+}

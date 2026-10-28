@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+<head><script>window.SWL_DEMO={page:"console"}</script><script src="../demo-sheet.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>scalewithluv console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* scalewithluv brand: yellow #FFC700 + near-black on soft grey; floating glass bars, black pills, a serif-italic accent
+   word on a yellow highlight (as in the carousels). Light only. */
+:root{--bg:#f1f1f3;--surface:#fff;--surface-2:#f4f4f6;--hair:rgba(17,17,20,.07);--hair-2:rgba(17,17,20,.13);--ink:#111114;--ink-2:#3a3a40;--muted:#6b6b73;--faint:#a1a1a8;
+  --accent:#ffc700;--accent-soft:#fff3c4;--accent-ink:#5c4700;--ok:#1a8f4e;--ok-soft:#e5f5ec;--warn:#a35f00;--warn-soft:#fff1dc;--bad:#d1342b;--bad-soft:#fde9e7;
+  --glass:rgba(255,255,255,.72);--glass-line:rgba(255,255,255,.85);
+  --sh-1:0 1px 1px rgba(17,17,20,.04),0 2px 6px -2px rgba(17,17,20,.08);
+  --sh-2:0 1px 1px rgba(17,17,20,.04),0 14px 34px -14px rgba(17,17,20,.22),inset 0 1px 0 rgba(255,255,255,.9);
+  --sh-3:0 2px 4px rgba(17,17,20,.06),0 30px 70px -24px rgba(17,17,20,.38);
+  --font:Inter,-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',system-ui,sans-serif;--serif:'DM Serif Display',Georgia,serif;--r:22px;color-scheme:light}
+*{box-sizing:border-box}html,body{margin:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;background:var(--bg);touch-action:pan-x pan-y;-webkit-tap-highlight-color:transparent}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(60vmax 40vmax at 0% 0%,rgba(255,199,0,.22),rgba(255,199,0,0) 70%),radial-gradient(50vmax 40vmax at 100% 100%,rgba(17,17,20,.06),rgba(17,17,20,0) 70%)}
+body{position:relative;color:var(--ink);font:13.5px/1.45 var(--font);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden;letter-spacing:-.005em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.glass,.top,.card,.modal,.tabs{background:var(--glass);-webkit-backdrop-filter:blur(24px) saturate(1.6);backdrop-filter:blur(24px) saturate(1.6);border:1px solid var(--glass-line);box-shadow:var(--sh-2)}
+/* header: a floating glass pill */
+.top{position:sticky;top:10px;z-index:5;display:flex;align-items:center;gap:12px;margin:10px max(12px,env(safe-area-inset-left)) 0;padding:8px 10px 8px 8px;border-radius:999px;max-width:1336px}
+@media (min-width:1360px){.top{margin-left:auto;margin-right:auto}}
+.mark{width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:13.5px;letter-spacing:-.02em;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 4px 12px -4px rgba(255,170,0,.6)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;letter-spacing:-.025em;white-space:nowrap;min-width:0}
+.brand em,.gate h1 em{font-family:var(--serif);font-weight:400;font-style:italic;letter-spacing:0;background:var(--accent);padding:0 .22em .02em;border-radius:.28em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.grow{flex:1}
+.who{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);text-align:right;line-height:1.2;min-width:0}
+.who>div{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.who b{color:var(--ink)}
+@media (max-width:560px){.who>div{display:none}}
+.wrap{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;padding:18px max(12px,env(safe-area-inset-left)) 40px;max-width:1360px;margin:0 auto}
+@media (max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}.wrap.is-home aside{display:none}}.wrap>*{min-width:0}
+.card{border-radius:var(--r);padding:18px 20px}
+@media (max-width:560px){.card{padding:16px}}
+.card h2{margin:0 0 4px;font-size:17px;font-weight:800;letter-spacing:-.02em}.card h3{margin:20px 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700}
+.hint{color:var(--muted);font-size:12.5px}.err{color:var(--bad);font-size:12.5px}.okt{color:var(--ok);font-size:12.5px}
+/* buttons: pills; primary is the brand's black pill */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--hair-2);background:rgba(255,255,255,.85);border-radius:999px;padding:8px 15px;font-weight:650;font-size:13px;cursor:pointer;min-height:38px;
+  box-shadow:var(--sh-1);transition:transform .15s ease,box-shadow .15s ease,background .15s ease}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px -8px rgba(17,17,20,.3)}.btn:active{transform:translateY(0) scale(.98)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff;box-shadow:0 8px 20px -10px rgba(17,17,20,.7),inset 0 1px 0 rgba(255,255,255,.12)}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.sm{padding:5px 12px;min-height:32px;font-size:12px}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.list{display:flex;flex-direction:column;gap:8px}
+.cl{display:flex;flex-direction:column;gap:7px;text-align:left;border:1px solid var(--hair);background:rgba(255,255,255,.7);border-radius:16px;padding:13px 14px;cursor:pointer;box-shadow:var(--sh-1);transition:transform .15s ease,box-shadow .15s ease}
+.cl:hover{transform:translateY(-1px);box-shadow:0 10px 22px -12px rgba(17,17,20,.28)}
+.cl[aria-current=true]{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:0 14px 28px -14px rgba(17,17,20,.6)}.cl b{font-size:14px;font-weight:750;letter-spacing:-.01em}
+.cl[aria-current=true] .chip{background:rgba(255,255,255,.14);color:#fff}.cl[aria-current=true] .chip.ok{background:rgba(52,199,89,.28)}.cl[aria-current=true] .chip.acc{background:var(--accent);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}.chip{font-size:11px;font-weight:650;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}.chip.warn{background:var(--warn-soft);color:var(--warn)}.chip.bad{background:var(--bad-soft);color:var(--bad)}.chip.acc{background:var(--accent-soft);color:var(--accent-ink)}
+/* tabs: a glass segmented pill, the active one a black pill */
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding:4px;border-radius:999px;margin:14px 0 18px;box-shadow:var(--sh-1)}.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:0;background:none;border-radius:999px;padding:8px 14px;font-weight:650;font-size:12.5px;color:var(--muted);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-pressed=true]{background:var(--ink);color:#fff;box-shadow:0 6px 14px -6px rgba(17,17,20,.55)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.kpi{background:rgba(255,255,255,.75);border:1px solid var(--hair);border-radius:16px;padding:12px 14px;box-shadow:var(--sh-1)}
+.kpi>span{display:block;font-size:11.5px;color:var(--muted);font-weight:600}.kpi b{font-size:21px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+/* tiers: floating cards; the chosen one goes black with a yellow price */
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.tier{display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;border:1px solid var(--hair);border-radius:20px;padding:16px;cursor:pointer;background:rgba(255,255,255,.8);text-align:left;box-shadow:var(--sh-1);transition:transform .18s ease,box-shadow .18s ease;color:var(--ink)}
+.tier:hover{transform:translateY(-2px);box-shadow:0 16px 30px -16px rgba(17,17,20,.3)}
+.tier[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:0 22px 40px -18px rgba(17,17,20,.65)}
+.tier b{font-size:15px;font-weight:800;letter-spacing:-.015em}.tier .pr{font-size:26px;font-weight:800;letter-spacing:-.03em;margin:6px 0 4px;font-variant-numeric:tabular-nums}
+.tier[aria-pressed=true] .pr{color:var(--accent)}.tier[aria-pressed=true] .hint{color:rgba(255,255,255,.66)}
+.tier ul{margin:8px 0 0;padding-left:17px;color:var(--ink-2);font-size:12.5px}.tier[aria-pressed=true] ul{color:rgba(255,255,255,.86)}
+.tier li::marker{color:var(--accent)}
+.rows{display:flex;flex-direction:column}.row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--hair)}.row:first-child{border-top:0}
+.row .t{flex:1;min-width:0}
+.rows .row>span:last-child{min-width:0;max-width:62%;text-align:right;overflow-wrap:anywhere}.row .t b{display:block;font-size:13.5px;font-weight:700}.row .t small{color:var(--muted)}
+.qty{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.8);border:1px solid var(--hair);border-radius:999px;padding:3px;box-shadow:var(--sh-1)}
+.qty .btn{min-width:34px;min-height:34px;padding:0 10px;box-shadow:none;border:0;background:var(--surface-2);font-size:16px}.qty .btn:hover{background:var(--accent)}
+.qty b{min-width:22px;text-align:center;font-variant-numeric:tabular-nums;font-weight:800}.qty .btn:disabled{opacity:.35;background:var(--surface-2)}
+/* switches: iOS style, black when on */
+.sw{position:relative;width:50px;height:30px;border-radius:999px;background:rgba(17,17,20,.14);border:0;cursor:pointer;flex:none;transition:background .2s}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.22),0 0 0 .5px rgba(0,0,0,.04);transition:transform .22s cubic-bezier(.3,1.4,.5,1)}
+.sw[aria-checked=true]{background:var(--ink)}.sw[aria-checked=true]::after{transform:translateX(20px)}
+label.f,.form label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);font-weight:650}
+input,select,textarea{border:1px solid var(--hair-2);border-radius:13px;padding:9px 12px;background:rgba(255,255,255,.9);min-height:40px;font-size:14px;font-weight:500;min-width:0;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 4px rgba(255,199,0,.35)}
+@media (max-width:720px){input,select,textarea{font-size:16px}}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.diff{width:100%;border-collapse:collapse;font-size:12.5px}.diff td,.diff th{padding:7px 8px;border-bottom:1px solid var(--hair);text-align:left;vertical-align:top}.diff th{color:var(--muted);font-weight:650}
+.diff s{color:var(--bad)}.diff ins{color:var(--ok);text-decoration:none;font-weight:700}
+.scrim{position:fixed;inset:0;background:rgba(17,17,20,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .18s ease}
+.modal{border-radius:26px;max-width:620px;width:100%;max-height:86vh;overflow:auto;padding:20px 22px;background:rgba(255,255,255,.9);box-shadow:var(--sh-3);animation:popIn .22s cubic-bezier(.2,1.2,.4,1)}
+.modal h2{font-weight:800;letter-spacing:-.02em}
+.modal .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+@keyframes fadeIn{from{opacity:0}}@keyframes popIn{from{opacity:0;transform:translateY(8px) scale(.98)}}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;z-index:30;font-weight:650;font-size:13px;max-width:92vw;box-shadow:var(--sh-3)}
+.step{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--hair)}.step:first-child{border-top:0}
+.step .n{width:28px;height:28px;border-radius:9px;background:var(--accent);color:var(--ink);display:grid;place-items:center;font-weight:800;flex:none}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.links a{display:block;padding:12px 14px;border:1px solid var(--hair);border-radius:16px;color:var(--ink);text-decoration:none;font-weight:700;background:rgba(255,255,255,.75);box-shadow:var(--sh-1);transition:transform .15s,box-shadow .15s}
+.links a:hover{transform:translateY(-1px);box-shadow:0 10px 22px -12px rgba(17,17,20,.28)}.links a small{display:block;color:var(--muted);font-weight:400;overflow-wrap:anywhere}
+.empty{color:var(--muted);text-align:center;padding:30px 10px}
+/* sign-in: the brand mark on a glass card */
+.gate{max-width:460px;margin:11vh auto 40px;padding:34px 26px 26px;text-align:center;border-radius:30px}
+.gate .mark{width:64px;height:64px;border-radius:18px;font-size:24px;margin:0 auto 18px}
+.gate h1{font-weight:800;font-size:34px;letter-spacing:-.035em;margin:0 0 8px;line-height:1.15}.gate p{color:var(--muted)}
+@media (max-width:480px){.gate{margin:6vh 12px 30px}.gate h1{font-size:29px}}
+#gbtn{display:flex;justify-content:center;margin:20px 0 10px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* ---- v2: account pill, search pill, client marks, status dots ---- */
+.me{display:flex;align-items:center;gap:8px;padding:3px 12px 3px 3px;border-radius:999px;background:rgba(255,255,255,.65);border:1px solid var(--hair);font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap}
+.me img{width:30px;height:30px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(17,17,20,.18)}
+@media (max-width:560px){.me span{display:none}.me{padding:3px}}
+.kbtn{display:inline-flex;align-items:center;gap:10px;min-height:38px;padding:0 8px 0 14px;border-radius:999px;border:1px solid var(--hair);background:rgba(255,255,255,.65);color:var(--muted);font-weight:600;font-size:12.5px;cursor:pointer;min-width:180px}
+.kbtn:hover{color:var(--ink)}.kbtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
+.kbd{margin-left:auto;font:600 11px/1 var(--font);border:1px solid var(--hair-2);border-bottom-width:2px;border-radius:7px;padding:4px 6px;color:var(--muted);background:#fff}
+@media (max-width:720px){.kbtn{min-width:0;padding:0 11px}.kbtn .lbl,.kbtn .kbd{display:none}}
+@media (max-width:440px){.top .bw{display:none}.top{gap:8px}.top .btn.sm{min-width:38px;min-height:38px;padding:0 12px;font-size:16px}}
+.av{--c:#111114;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;flex:none;background:var(--c);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 6px 14px -6px var(--c)}
+.av.img{background:#fff;border:1px solid var(--hair);box-shadow:0 6px 14px -8px var(--c)}.av img{width:24px;height:24px;object-fit:contain}
+.cl-h{display:flex;align-items:center;gap:10px;min-width:0}.cl-h b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--faint);flex:none;box-shadow:0 0 0 3px rgba(161,161,168,.2)}
+.dot.ok{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.2);animation:pulse 2.6s ease-in-out infinite}
+.dot.warn{background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.22)}.dot.bad{background:var(--bad);box-shadow:0 0 0 3px rgba(209,52,43,.2)}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}
+.cl.homeb{flex-direction:row;align-items:center;gap:10px}.cl.homeb .av{background:var(--accent);color:var(--ink);box-shadow:0 6px 14px -6px rgba(255,170,0,.8)}
+.cl.homeb svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2}
+.health{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:2px}.health span{display:inline-flex;align-items:center;gap:6px}
+/* ---- v2: sliding tab indicator ---- */
+.tabs{position:relative}.tabs button{position:relative;z-index:1}
+.tabs .ind{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:var(--ink);box-shadow:0 6px 14px -6px rgba(17,17,20,.55);z-index:0;transition:left .38s cubic-bezier(.3,1.25,.45,1),width .38s cubic-bezier(.3,1.25,.45,1)}
+.tabs.js button[aria-pressed=true]{background:transparent;box-shadow:none}
+/* ---- v2: home ---- */
+.hero{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}.hero h2{font-size:24px!important;letter-spacing:-.03em!important}
+.hlist{display:flex;flex-direction:column;gap:10px}
+.hrow{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,.8fr) 132px;align-items:center;gap:14px;padding:13px 16px;border-radius:18px;background:rgba(255,255,255,.78);border:1px solid var(--hair);box-shadow:var(--sh-1);cursor:pointer;text-align:left;width:100%;color:var(--ink)}
+.hrow .who2{display:flex;align-items:center;gap:11px;min-width:0}.hrow .who2>div{min-width:0}.hrow .who2 b{display:block;font-size:14.5px;font-weight:800;letter-spacing:-.015em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hrow .m>span{display:block;font-size:11px;color:var(--muted);font-weight:650}.hrow .m b{white-space:nowrap;font-size:14.5px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.spark{width:132px;height:38px;display:block}
+@media (max-width:900px){.hrow{grid-template-columns:minmax(0,1fr) auto;row-gap:10px}.hrow .m{display:none}.hrow .m.keep{display:block;text-align:right}.spark{width:110px}}
+/* ---- v2: plan ---- */
+.tier{position:relative;overflow:visible}
+.ribbon{position:absolute;top:-11px;right:14px;background:var(--accent);color:var(--ink);font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;padding:5px 11px;border-radius:999px;box-shadow:0 8px 18px -8px rgba(255,160,0,.9);z-index:2}
+details.cmpd{margin-top:16px}details.cmpd summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:750;font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--hair-2);background:rgba(255,255,255,.85);box-shadow:var(--sh-1)}
+details.cmpd summary::-webkit-details-marker{display:none}details.cmpd summary::after{content:'';width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s}
+details.cmpd[open] summary::after{transform:rotate(-135deg) translateY(-1px)}
+.tblw{overflow-x:auto;margin-top:10px;border:1px solid var(--hair);border-radius:18px;background:rgba(255,255,255,.75);box-shadow:var(--sh-1)}
+.cmp{width:100%;border-collapse:collapse;font-size:12.5px;min-width:440px}.cmp th,.cmp td{padding:9px 12px;border-bottom:1px solid var(--hair);text-align:center;white-space:nowrap}
+.cmp th:first-child,.cmp td:first-child{text-align:left;white-space:normal}.cmp tr:last-child td{border-bottom:0}
+.cmp thead th{font-weight:800;font-size:13px;letter-spacing:-.01em;padding-top:12px}.cmp thead small{display:block;font-weight:650;color:var(--muted);font-size:11.5px}
+.cmp .hl{background:rgba(255,199,0,.12)}.cmp .y{font-weight:800}.cmp .n{color:var(--faint)}.cmp .a{color:var(--accent-ink);font-weight:650;font-size:11.5px}
+.total{position:sticky;bottom:12px;z-index:3;display:flex;align-items:center;gap:12px;margin-top:18px;padding:8px 8px 8px 20px;border-radius:999px;flex-wrap:wrap}
+.total .n{font-size:21px;font-weight:800;letter-spacing:-.025em;font-variant-numeric:tabular-nums}.total small{color:var(--muted);font-weight:600}
+/* ---- v2: billing timeline ---- */
+.tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:6px 0 4px}
+.tl .st{position:relative;padding-top:26px;text-align:center;font-size:12px;min-width:0}
+.tl .st::before{content:'';position:absolute;top:10px;left:0;right:0;height:3px;background:var(--hair-2)}
+.tl .st:first-child::before{left:50%}.tl .st:last-child::before{right:50%}.tl .st.done::before{background:var(--ink)}
+.tl .st i{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:19px;height:19px;border-radius:50%;background:#fff;border:3px solid var(--hair-2);box-sizing:border-box}
+.tl .st.done i{border-color:var(--ink);background:var(--ink)}.tl .st.now i{border-color:var(--ink);background:var(--accent);box-shadow:0 0 0 6px rgba(255,199,0,.3)}
+.tl .st.bad.now i{background:var(--bad);border-color:var(--bad);box-shadow:0 0 0 6px rgba(209,52,43,.18)}
+.tl .st b{display:block;font-weight:750}.tl .st span{color:var(--muted);font-size:11.5px}
+.remind{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px;padding:12px 14px;border-radius:16px;background:rgba(255,199,0,.12);border:1px solid rgba(255,199,0,.35)}
+.remind .t{flex:1;min-width:200px}.remind b{display:block;font-weight:750}
+/* ---- v3: attention list, health, help tickets, setup ---- */
+.al-list{margin:0;padding-left:18px}.al{margin:3px 0}.al.bad{color:var(--bad);font-weight:650}.al.warn{color:var(--warn)}
+.al-row{width:100%;border:0;background:none;text-align:left;cursor:pointer;color:var(--ink)}.al-dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--faint)}
+.al-dot.bad{background:var(--bad)}.al-dot.warn{background:#f59e0b}.al-dot.info{background:#60a5fa}
+.bars{width:100%;max-width:420px;height:64px;display:block;margin:4px 0}
+.tk{padding:12px 0;border-top:1px solid var(--hair)}.tk:first-child{border-top:0}.tk.open .tk-m{font-weight:600}
+.tk-h{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.tk-m{margin:6px 0 8px;white-space:pre-wrap}.tk-a{display:flex;flex-direction:column;gap:8px}.tk-a textarea{width:100%}
+.pbar{display:block;height:6px;border-radius:9px;background:rgba(17,17,20,.1);margin-top:8px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--accent);border-radius:9px}
+.tools{display:flex;gap:6px;flex-wrap:wrap;align-self:center}.mg-pct{color:var(--ok);font-weight:650}.mg-pct.neg{color:var(--bad)}
+/* ---- requests inbox ---- */
+.inbox{background:rgba(255,199,0,.10);border:1px solid rgba(255,199,0,.35);border-radius:16px;padding:2px 12px}
+.inbox-card{margin-bottom:16px;padding:10px 14px;border-radius:16px;background:rgba(255,199,0,.10);border:1px solid rgba(255,199,0,.35)}
+.inbox .row,.inbox-card .row{flex-wrap:wrap}.inbox .row .t,.inbox-card .row .t{min-width:200px}
+.hero .btn{align-self:center}
+/* ---- v2: command bar ---- */
+.cmdk{position:fixed;inset:0;z-index:40;display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 16px;background:rgba(17,17,20,.26);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadeIn .15s ease}
+.cmdk .box{width:100%;max-width:580px;border-radius:24px;overflow:hidden;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(30px) saturate(1.7);backdrop-filter:blur(30px) saturate(1.7);border:1px solid var(--glass-line);box-shadow:var(--sh-3);animation:popIn .2s cubic-bezier(.2,1.2,.4,1)}
+.cmdk .q{display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--hair)}.cmdk .q svg{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2.2;flex:none}
+.cmdk input{flex:1;border:0;border-radius:0;padding:17px 0;font-size:16px;background:transparent;box-shadow:none!important;min-height:0}
+.cmdk ul{list-style:none;margin:0;padding:6px;max-height:52vh;overflow:auto}
+.cmdk li{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:13px;cursor:pointer;font-weight:600}
+.cmdk li small{margin-left:auto;color:var(--muted);font-weight:600;font-size:11.5px;white-space:nowrap}
+.cmdk li[aria-selected=true]{background:var(--ink);color:#fff}.cmdk li[aria-selected=true] small{color:rgba(255,255,255,.6)}
+.cmdk .none{padding:18px;color:var(--muted);text-align:center}
+.cmdk .foot{display:flex;gap:14px;padding:9px 16px;border-top:1px solid var(--hair);font-size:11.5px;color:var(--muted)}
+/* ---- v2: toasts with a drawn tick, skeleton shimmer ---- */
+.toast{display:flex;align-items:center;gap:9px;animation:toastIn .38s cubic-bezier(.2,1.35,.4,1)}
+.toast svg{width:20px;height:20px;flex:none}.toast .ck circle{fill:#22c55e}.toast .ck path{fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:20;stroke-dashoffset:20;animation:draw .42s .12s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}@keyframes toastIn{from{opacity:0;transform:translate(-50%,14px) scale(.95)}}
+.sk{display:block;border-radius:12px;background:linear-gradient(90deg,rgba(17,17,20,.055) 25%,rgba(17,17,20,.11) 37%,rgba(17,17,20,.055) 63%);background-size:400% 100%;animation:shim 1.25s ease infinite}
+@keyframes shim{0%{background-position:100% 50%}100%{background-position:0 50%}}
+/* ---- v2: motion - spring switches, cursor tilt with soft light (desktop mouse only) ---- */
+.sw:active::after{width:28px}.sw[aria-checked=true]:active::after{transform:translateX(16px)}
+.tilt{position:relative}
+@media (hover:hover) and (pointer:fine){
+  .tilt,.tilt:hover{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px));transition:transform .28s cubic-bezier(.2,.9,.3,1),box-shadow .28s ease}
+  .tilt::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.6),rgba(255,255,255,0) 46%);opacity:var(--lo,0);transition:opacity .3s}
+  .tier[aria-pressed=true].tilt::after,.cl[aria-current=true].tilt::after{background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.16),rgba(255,255,255,0) 46%)}}
+@media (prefers-reduced-motion:reduce){.tilt,.tilt:hover{transform:none!important}.tilt::after{display:none}.dot.ok{animation:none}}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="tiers.js"></script>
+<script src="releases.js"></script>
+<script>
+/* no page zoom (B-129): pinch via Safari gestures or two-finger touches, double-tap via touch-action, 16px fields on phones */
+['gesturestart','gesturechange'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+/* the chosen tab stays in view on phones, after every render */
+new MutationObserver(()=>{const a=document.querySelector('.tabs [aria-pressed=true]'),tb=a&&a.parentElement;if(!tb||tb.dataset.c===a.textContent)return;tb.dataset.c=a.textContent;
+  tb.scrollLeft+=a.getBoundingClientRect().left-tb.getBoundingClientRect().left-(tb.clientWidth-a.offsetWidth)/2}).observe(document.getElementById('app'),{childList:true,subtree:true});
+
+'use strict';
+/* scalewithluv console - Luv's control room for every client. Sign in with Google (Luv's account only - each client's
+   sheet checks it), then connect a client with its console key (script property CONSOLE_KEY, typed once per device,
+   kept only in this browser). Everything it changes is a Settings row console.* on that client's sheet, logged in the
+   client's History as critical. No client data is stored here. */
+const $=s=>document.querySelector(s);
+function h(t,a,...k){const e=document.createElement(t);if(a)for(const[x,v]of Object.entries(a)){if(v==null||v===false)continue;if(x==='class')e.className=v;else if(x.startsWith('on')&&typeof v==='function')e.addEventListener(x.slice(2),v);else if(x==='style'&&typeof v==='object')Object.entries(v).forEach(([p,q])=>p.startsWith('--')?e.style.setProperty(p,q):(e.style[p]=q));else e.setAttribute(x,v===true?'':v)}
+  for(const c of k.flat(9)){if(c==null||c===false)continue;e.append(c.nodeType?c:document.createTextNode(String(c)))}return e}
+const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const inr=n=>((+n||0)<0?'−₹':'₹')+Math.abs(Math.round(+n||0)).toLocaleString('en-IN'),r2=n=>'₹'+(+n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,TODAY=iso(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)},addMonth=s=>{const d=new Date(s+'T12:00:00');d.setMonth(d.getMonth()+1);return iso(d)};
+const fmtD=s=>s?new Date(String(s).slice(0,10)+'T12:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'–';
+let toastT;function toast(t){clearTimeout(toastT);document.querySelectorAll('.toast').forEach(x=>x.remove());const ok=/✓/.test(t),e=h('div',{class:'toast',role:'status'});
+  if(ok){const i=h('span');i.innerHTML='<svg class="ck" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10"/><path d="M5.8 10.4l2.8 2.8 5.6-6"/></svg>';e.append(i.firstChild)}   // a drawn tick on success
+  e.append(String(t).replace(/\s*✓\s*/g,' ').trim());document.body.append(e);toastT=setTimeout(()=>e.remove(),3200)}
+/* Restore one tab from a nightly copy: pick the tab, type RESTORE <tab>. The sheet takes a fresh backup first (undo). */
+const RESTORE_TABS=[['bookings','Bookings'],['properties','Properties'],['units','Units'],['expenses','Expenses'],['payouts','Payouts'],['maintenance','Maintenance'],['turnovers','Cleaning'],['guest_info','Guest info (Wi-Fi, door codes)'],['blocks','Blocked dates'],['overrides','Custom prices'],['rates','Rates'],['seasons','Seasons'],['leads','Leads'],['requests','Guest requests'],['lists','Lists'],['users','Users'],['checklists','Checklists'],['stock','Stock'],['reviews','Reviews'],['settings','Settings (keeps the current plan)']];
+function restoreTab(c,b){const sel=h('select',{'aria-label':'Tab to restore'},RESTORE_TABS.map(([k,l])=>h('option',{value:k},l))),typed=h('input',{placeholder:'RESTORE bookings',autocomplete:'off','aria-label':'Type to confirm'});
+  sel.addEventListener('change',()=>{typed.placeholder='RESTORE '+sel.value});
+  modal('Restore a tab',h('div',{class:'form'},h('p',null,'From the backup of '+b.name.replace(/^.* backup /,'')+'. The tab is replaced with that copy; everything else stays. A fresh backup is taken first, so this can be undone. History is never restored.'),h('label',{class:'f'},'Tab',sel),h('label',{class:'f'},'Type RESTORE and the tab name',typed)),
+    close=>[h('button',{class:'btn',onclick:close},'Cancel'),h('button',{class:'btn danger',onclick:async e=>{if(typed.value.trim()!=='RESTORE '+sel.value)return toast('Type RESTORE '+sel.value+' exactly');e.currentTarget.disabled=true;
+      try{const j=await api(c,'console_restore',{backup:b.id,tab:sel.value,confirm:typed.value.trim()});close();toast('✓ '+j.rows+' rows restored · undo copy saved');refresh(c)}catch(x){e.currentTarget.disabled=false;toast(x.message)}}},'Restore')])}
+function modal(title,body,acts){const close=()=>sc.remove(),sc=h('div',{class:'scrim',onclick:e=>{if(e.target===sc)close()}},h('div',{class:'modal',role:'dialog','aria-modal':'true','aria-label':title},h('h2',null,title),body,h('div',{class:'acts'},acts(close))));document.body.append(sc);return close}
+const LOCAL=/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+const S={reg:null,me:null,idToken:null,sel:ls.get('swl_sel','home'),tab:'overview',st:{},busy:{},ping:{},shown:{}};
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sval=v=>v!=null&&typeof v==='object'?JSON.stringify(v):String(v??'');   // the sheet hands JSON rows back parsed
+const setting=(st,k)=>{const r=(st&&st.settings||[]).find(x=>x.key===k);return r?sval(r.value):''};
+const ICON={search:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>',home:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7M5 10v10h14V10"/></svg>'};
+const icon=k=>{const i=h('span',{style:{display:'inline-flex'}});i.innerHTML=ICON[k];return i};
+/* numbers that count up: <x data-k data-to data-fmt>; from what was last shown under that key (0 the first time) */
+const FMT={inr:n=>inr(n),r2:n=>r2(n),int:n=>Math.round(n).toLocaleString('en-IN')};
+const num=(k,v,fmt)=>h('span',{'data-k':k,'data-to':String(+v||0),'data-fmt':fmt||'int'},FMT[fmt||'int'](+v||0));
+function countUps(){document.querySelectorAll('#app [data-to]').forEach(e=>{const k=e.dataset.k,to=+e.dataset.to,f=FMT[e.dataset.fmt]||FMT.int,from=S.shown[k]??0;S.shown[k]=to;
+  if(REDUCED||from===to)return;const t0=performance.now(),d=Math.min(900,420+Math.abs(to-from)/Math.max(1,Math.abs(to))*500);
+  const step=t=>{const p=Math.min(1,(t-t0)/d),q=1-Math.pow(1-p,3);e.textContent=f(from+(to-from)*q);if(p<1&&e.isConnected)requestAnimationFrame(step)};e.textContent=f(from);requestAnimationFrame(step);
+  setTimeout(()=>{e.textContent=f(to)},d+80)})}   // a background tab gets no animation frames: always land on the real number
+const forget=pre=>Object.keys(S.shown).forEach(k=>{if(k.startsWith(pre))delete S.shown[k]});
+/* the black pill slides from the last tab to the new one */
+function slideTabs(){const tb=$('.tabs'),a=tb&&tb.querySelector('[aria-pressed=true]'),ind=tb&&tb.querySelector('.ind');if(!a||!ind)return;tb.classList.add('js');
+  const to={l:a.offsetLeft,w:a.offsetWidth},p=S.ind&&S.ind.c===S.sel?S.ind:null;S.ind={c:S.sel,...to};
+  if(!p||REDUCED){ind.style.transition='none';ind.style.left=to.l+'px';ind.style.width=to.w+'px';return}
+  ind.style.transition='none';ind.style.left=p.l+'px';ind.style.width=p.w+'px';void ind.offsetWidth;ind.style.transition='';ind.style.left=to.l+'px';ind.style.width=to.w+'px'}
+/* cards lean toward the mouse with a soft light (desktop) */
+let tiltEl=null;const untilt=el=>{if(el){el.style.removeProperty('--rx');el.style.removeProperty('--ry');el.style.removeProperty('--ty');el.style.setProperty('--lo','0')}};
+document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse'||REDUCED)return;const el=e.target.closest&&e.target.closest('.tilt');if(el!==tiltEl){untilt(tiltEl);tiltEl=el}if(!el)return;
+  const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+  el.style.setProperty('--rx',((.5-y)*4).toFixed(2)+'deg');el.style.setProperty('--ry',((x-.5)*5).toFixed(2)+'deg');el.style.setProperty('--ty','-3px');
+  el.style.setProperty('--mx',(x*100).toFixed(1)+'%');el.style.setProperty('--my',(y*100).toFixed(1)+'%');el.style.setProperty('--lo','1')});
+document.addEventListener('pointerleave',()=>{untilt(tiltEl);tiltEl=null});
+/* is the bot up? (a no-cors ping: any answer = reachable; a sleeping free host can take ~30 s) */
+function ping(c){if(!c.bot_url)return;S.ping[c.id]='checking';
+  fetch(c.bot_url,{mode:'no-cors',cache:'no-store',signal:AbortSignal.timeout?AbortSignal.timeout(35000):undefined}).then(()=>{S.ping[c.id]='ok'}).catch(()=>{S.ping[c.id]='bad'}).finally(()=>draw())}
+const health=c=>{const st=S.st[c.id],sh=!sess(c)?'off':!st?'checking':st.error?'bad':'ok',bt=!c.bot_url?'none':S.ping[c.id]||'checking';
+  const lvl=sh==='off'?'':sh==='bad'||bt==='bad'?(sh==='bad'&&bt==='bad'?'bad':'warn'):sh==='ok'&&(bt==='ok'||bt==='none')?'ok':'';
+  const word={ok:'reachable',bad:'not reachable',checking:'checking…',off:'not connected',none:'no bot'};
+  return {lvl,sheet:word[sh],bot:bt==='ok'?'online':bt==='bad'?'not answering':word[bt],label:`Sheet ${word[sh]} · Bot ${bt==='ok'?'online':bt==='bad'?'not answering':word[bt]}`}};
+const dot=c=>{const x=health(c);return h('span',{class:'dot '+x.lvl,role:'img','aria-label':x.label,title:x.label})};
+const initials=n=>String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const avatar=c=>c.logo?h('span',{class:'av img',style:{'--c':c.color||'#111114'}},h('img',{src:c.logo,alt:''})):h('span',{class:'av',style:{'--c':c.color||'#111114'},'aria-hidden':'true'},initials(c.name));
+/* a 6-month sparkline */
+function spark(vals,label){const n=vals.length,mx=Math.max(1,...vals),W=132,H=38,P=4,x=i=>P+(W-2*P)*(n<2?.5:i/(n-1)),y=v=>H-P-(H-2*P)*v/mx;
+  const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' '),id='g'+Math.random().toString(36).slice(2,7),e=h('span');
+  e.innerHTML=`<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc700" stop-opacity=".45"/><stop offset="1" stop-color="#ffc700" stop-opacity="0"/></linearGradient></defs>`+
+    `<polygon points="${x(0)},${H} ${pts} ${x(n-1)},${H}" fill="url(#${id})"/><polyline points="${pts}" fill="none" stroke="#111114" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`+
+    `<circle cx="${x(n-1)}" cy="${y(vals[n-1])}" r="3.2" fill="#ffc700" stroke="#111114" stroke-width="1.6"/></svg>`;return e.firstChild}
+const trendOf=st=>st&&Array.isArray(st.trend)&&st.trend.length?st.trend:null;
+/* what the client's Plan & billing page shows (console.catalog): names, prices, what each plan holds - from tiers.js */
+const catalogJSON=()=>JSON.stringify({tiers:SWL.TIERS.map(({k,name,price,blurb,features,limits})=>({k,name,price,blurb,features,limits})),
+  addons:SWL.ADDONS.map(({k,name,price,feature,add,limits,stack})=>({k,name,price,feature,add,limits,stack})),features:SWL.FEATURES.map(({k,name,what})=>({k,name,what}))});
+const planRows=(tier,addons,cp)=>[['console.tier',tier],...Object.entries(cp.features).map(([k,v])=>['console.feature.'+k,v]),...Object.entries(cp.limits).map(([k,v])=>['console.limit.'+k,v]),
+  ...Object.entries(cp.models).map(([k,v])=>['console.model.'+k,v]),['console.billing.amount',cp.price],['console.addons',JSON.stringify(addons||[])],['console.catalog',catalogJSON()]];
+const daysTo=d=>d?Math.round((new Date(d+'T12:00:00')-new Date(TODAY+'T12:00:00'))/864e5):0;
+const pendingOf=st=>(st&&st.requests||[]).filter(r=>r.status==='pending');
+/* versions: the sheet says its Code.gs version; the bot (/version) and the dashboard (version.json) say theirs */
+const REL=window.SWL_REL||{},cmpV=(a,b)=>{const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);for(let i=0;i<3;i++){if((x[i]||0)!==(y[i]||0))return(x[i]||0)-(y[i]||0)}return 0};
+S.ver={};
+async function versions(c){const v=S.ver[c.id]={};
+  if(c.bot_url)try{const j=await (await fetch(c.bot_url.replace(/\/$/,'')+'/version',{cache:'no-store',signal:AbortSignal.timeout?AbortSignal.timeout(35000):undefined})).json();v.engine=j.engine}catch(e){v.engine=null}
+  if(c.dashboard_url)try{const j=await (await fetch(c.dashboard_url.replace(/\/?$/,'/')+'version.json?'+Date.now(),{cache:'no-store'})).json();v.dashboard=j.version||'';v.build=j.build}catch(e){v.dashboard=null}
+  draw()}
+/* margin: what the client pays minus what they cost Luv (AI at cost, hosting); Meta bills WhatsApp to the client */
+function marginOf(st){const amt=+setting(st,'console.billing.amount')||0,m=st.month||{},K=SWL.COSTS||{hosting_inr:0,ai_markup_pct:0};
+  const ai=((+m.ai_cost_inr||0)+(+m.photo_cost_inr||0)+(+m.brief_cost_inr||0)+(+m.market_cost_inr||0))/(1+(K.ai_markup_pct||0)/100),cost=ai+K.hosting_inr;
+  return{amt,ai,host:K.hosting_inr,cost,margin:amt-cost,pct:amt?(amt-cost)/amt:null}}
+/* what needs Luv's eye for one client: [{lvl:'bad'|'warn'|'info', text, tab}] */
+function alertsOf(c){const st=S.st[c.id],out=[];if(!sess(c))return out;if(!st)return out;
+  if(st.error)return[{lvl:'bad',text:'Sheet not reachable: '+st.error,tab:'overview'}];
+  if(S.ping[c.id]==='bad')out.push({lvl:'bad',text:'Bot not answering',tab:'health'});
+  const H=st.health||{},lp=String(H.last_push||'');if(lp){const t=new Date(lp.length<=10?lp+'T23:59:00':lp).getTime();if(Date.now()-t>26*3600e3)out.push({lvl:'warn',text:'Bot last synced '+fmtD(lp.slice(0,10)),tab:'health'})}
+  if(!st.code_version)out.push({lvl:'warn',text:'Code.gs older than v1.48 - paste the latest',tab:'health'});
+  else if(REL.code&&cmpV(st.code_version,REL.code)<0)out.push({lvl:'warn',text:`Code.gs v${st.code_version} (latest v${REL.code})`,tab:'health'});
+  const V=S.ver[c.id]||{};if(V.engine&&REL.engine&&cmpV(V.engine,REL.engine)<0)out.push({lvl:'info',text:`Bot v${V.engine} (latest v${REL.engine})`,tab:'health'});
+  if(V.dashboard&&REL.dashboard&&cmpV(V.dashboard,REL.dashboard)<0)out.push({lvl:'info',text:`Dashboard v${V.dashboard} (latest v${REL.dashboard})`,tab:'health'});
+  const D=st.days||[];if(D.length>=8){const y=D[D.length-2],avg=D.slice(-9,-2).reduce((a,d)=>a+d.ai_cost_inr,0)/7;if(y.ai_cost_inr>Math.max(50,3*avg))out.push({lvl:'warn',text:`AI spend jumped: ${inr(y.ai_cost_inr)} yesterday vs ${inr(avg)} a day`,tab:'health'})}
+  if((H.failed_24h||0)>10)out.push({lvl:'warn',text:`${H.failed_24h} failed sheet calls in 24 h`,tab:'health'});
+  Object.entries(st.keys||{}).forEach(([k,d])=>{const n=daysTo(String(d).slice(0,10));if(/^\d{4}-\d{2}-\d{2}/.test(String(d))&&n<=14)out.push({lvl:n<=3?'bad':'warn',text:n<=0?`${k} expired`:`${k} expires in ${n} day${n===1?'':'s'}`,tab:'health'})});
+  const open_=(st.tickets||[]).filter(t=>t.status==='open').length;if(open_)out.push({lvl:'info',text:`${open_} help request${open_>1?'s':''} waiting`,tab:'support'});
+  if(st.daily_on===false)out.push({lvl:'warn',text:'Daily check and nightly backup are off',tab:'health'});
+  if(st.daily_on&&st.backup_at!==undefined&&(!st.backup_at||Date.now()-new Date(st.backup_at).getTime()>50*3600e3))out.push({lvl:'warn',text:'No Sheet backup in 2 days',tab:'health'});
+  const Y=st.sync;if(Y){if(Y.down)out.push({lvl:'warn',text:`${Y.down} calendar link${Y.down>1?'s':''} not answering`,tab:'health'});
+    if(Y.links&&!Y.on)out.push({lvl:'warn',text:'Calendar sync has links but no 3-hourly trigger',tab:'health'})}
+  if(setting(st,'console.heartbeat_url')&&st.daily_on&&(!st.heartbeat_at||Date.now()-new Date(st.heartbeat_at).getTime()>26*3600e3))out.push({lvl:'warn',text:'Daily heartbeat not sent in 26 h',tab:'health'});
+  return out}
+/* a 14-day bar chart (AI spend) */
+function bars(vals,label){const W=280,H=56,n=vals.length,mx=Math.max(1,...vals),bw=W/n,e=h('span');
+  e.innerHTML=`<svg viewBox="0 0 ${W} ${H}" class="bars" role="img" aria-label="${label}">`+vals.map((v,i)=>{const hh=Math.max(2,(H-6)*v/mx);return`<rect x="${(i*bw+2).toFixed(1)}" y="${(H-hh).toFixed(1)}" width="${(bw-4).toFixed(1)}" height="${hh.toFixed(1)}" rx="3" fill="${i===n-1?'#ffc700':'#111114'}" opacity="${i===n-1?1:.82}"><title>${inr(v)}</title></rect>`}).join('')+`</svg>`;return e.firstChild}
+/* a client's change request: upgrade = on now (+ the rest of this month on the next bill); downgrade = from the due date */
+function reqRow(c,st,r){const ad=[].concat(r.addons||[]),cur=+setting(st,'console.billing.amount')||0,up=+r.price>=cur,tn=(SWL.TIERS.find(t=>t.k===r.tier)||{}).name||r.tier;
+  const an=ad.map(k=>(SWL.ADDONS.find(a=>a.k===k)||{}).name||k);
+  return h('div',{class:'row'},avatar(c),h('div',{class:'t'},h('b',null,`${c.name}: ${tn}${an.length?', '+an.join(', '):''}`),
+      h('small',null,`${inr(r.price)} a month (now ${inr(cur)}) · ${up?'upgrade':'downgrade'} · asked ${fmtD(String(r.at).slice(0,10))} by ${r.by}${r.note?' · “'+r.note+'”':''}`)),
+    h('button',{class:'btn sm',onclick:()=>declineReq(c,r)},'Decline'),h('button',{class:'btn sm primary',onclick:()=>approveReq(c,st,r)},'Approve'))}
+function approveReq(c,st,r){const ad=[].concat(r.addons||[]),cp=SWL.compose(r.tier,ad),cur=+setting(st,'console.billing.amount')||0,due=setting(st,'console.billing.due').slice(0,10);
+  const up=cp.price>=cur,left=due&&due>TODAY?Math.min(30,daysTo(due)):0,pro=up&&left?Math.round((cp.price-cur)*left/30):0;
+  const rows=up?[...planRows(r.tier,ad,cp),['console.billing.extra',(+setting(st,'console.billing.extra')||0)+pro],['console.plan.next','']]
+              :[['console.plan.next',JSON.stringify({tier:r.tier,addons:ad,price:cp.price})]];
+  review(c,st,rows,async()=>{try{await api(c,'console_request',{id:r.request_id,status:'approved',note:up?(pro?`on now; ${inr(pro)} added to the next bill`:'on now'):`from ${fmtD(due)}`});toast('Approved ✓')}catch(x){toast('Saved, but the request wasn’t marked: '+x.message)}refresh(c)})}
+function declineReq(c,r){const why=h('input',{placeholder:'Why (they see this)',maxlength:300});
+  modal('Decline this request?',h('div',null,h('label',{class:'f'},'Note',why)),close=>[h('button',{class:'btn',onclick:close},'Keep it'),
+    h('button',{class:'btn danger',onclick:async e=>{e.currentTarget.disabled=true;try{await api(c,'console_request',{id:r.request_id,status:'declined',note:why.value.trim()});close();toast('Declined ✓');refresh(c)}catch(x){toast(x.message);e.currentTarget.disabled=false}}},'Decline')])}
+async function publishAll(btn){const on=S.reg.clients.filter(c=>sess(c));btn.disabled=true;let n=0;const bad=[];
+  for(const c of on){try{await api(c,'console_set',{name:'console.catalog',value:catalogJSON()});n++}catch(e){bad.push(`${c.name}: ${e.message==='bad console setting'?'its Code.gs is older than v1.47 (paste + deploy it)':e.message}`)}}
+  btn.disabled=false;if(!bad.length)return toast(`Prices published to ${n} client${n===1?'':'s'} ✓`);   // failures are named, never hidden
+  modal(`Published to ${n} of ${on.length}`,h('div',null,h('p',null,'These didn’t take the new prices:'),h('ul',null,bad.map(b=>h('li',null,b)))),close=>[h('button',{class:'btn primary',onclick:close},'OK')])}
+
+/* ---------------- registry: clients.json (committed) + clients added on this device ---------------- */
+async function loadReg(){let base={clients:[]};try{base=await (await fetch('clients.json?'+Date.now())).json()}catch(e){}
+  const extra=ls.get('swl_clients_extra',[]),gone=new Set(ls.get('swl_clients_removed',[]));
+  S.reg={google_client_id:base.google_client_id||'',clients:[...base.clients,...extra].filter(c=>!gone.has(c.id)&&(!c.test||LOCAL))}}
+const client=id=>(S.reg.clients||[]).find(c=>c.id===id);
+
+/* ---------------- talking to a client's sheet ---------------- */
+async function call(c,body){const r=await fetch(c.api_url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({device:'scalewithluv console',...body})});
+  const j=await r.json();if(j.error==='unauthorized'){ls.del('swl_sess_'+c.id);S.st[c.id]=null}if(j.error)throw new Error(j.error);return j}
+const sess=c=>{const s=ls.get('swl_sess_'+c.id,null);return s&&s.exp>Date.now()?s.s:null};
+async function api(c,action,extra){const s=sess(c);if(!s)throw new Error('connect first');return call(c,{key:s,action,...(extra||{})})}
+/* Google's sign-in token lives 1 hour: get a fresh one silently (auto sign-in) before it's sent, and once more if the
+   sheet says Google couldn't confirm it. The client's session then rolls 30 days from each use (90 at most). */
+const tokExp=t=>{try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).exp*1000}catch(e){return 0}};
+function freshToken(force){if(!force&&S.idToken&&tokExp(S.idToken)-120e3>Date.now())return Promise.resolve(S.idToken);
+  return new Promise((ok,no)=>{if(!(window.google&&google.accounts))return no(new Error('sign in with Google first'));S.tokWait=ok;
+    google.accounts.id.prompt(n=>{if(n.isNotDisplayed&&n.isNotDisplayed()||n.isSkippedMoment&&n.isSkippedMoment()){S.tokWait=null;no(new Error('Google sign-in needed: tap Sign in with Google'))}})})}
+async function connect(c,key){
+  if(c.test&&LOCAL){await fetch(new URL('/__google/'+encodeURIComponent(S.me&&S.me.email||'kapruwanluv@gmail.com'),c.api_url))}   // stand-in only
+  else await freshToken();
+  let j;try{j=await call(c,{action:'console_login',key,id_token:S.idToken||'x'})}
+  catch(e){if(c.test||!/unauthorized/.test(e.message))throw e;await freshToken(true);j=await call(c,{action:'console_login',key,id_token:S.idToken})}   // a stale Google token: once more
+  ls.set('swl_key_'+c.id,key);ls.set('swl_sess_'+c.id,{s:j.session,exp:Date.now()+(j.hours||720)*3600e3-60e3});return j}
+/* connected before on this device: reconnect on its own with the saved key (no re-pasting) */
+async function autoConnect(c){const k=ls.get('swl_key_'+c.id,'');if(!k||sess(c)||S.auto&&S.auto[c.id])return false;(S.auto=S.auto||{})[c.id]=1;
+  try{await connect(c,k);await refresh(c);return true}catch(e){return false}finally{delete S.auto[c.id]}}
+async function refresh(c){S.busy[c.id]=true;draw();try{S.st[c.id]=await api(c,'console_status')}catch(e){S.st[c.id]={error:e.message};if(/unauthorized|connect first/.test(e.message)&&ls.get('swl_key_'+c.id,'')){S.busy[c.id]=false;S.st[c.id]=null;if(await autoConnect(c))return}}finally{S.busy[c.id]=false;draw()}}
+const open=id=>{S.sel=id;ls.set('swl_sel',id);S.tab='overview';forget(id+':');const c=client(id);draw();if(c&&sess(c)&&!S.st[c.id]&&!S.busy[c.id])refresh(c);else if(c&&!sess(c))autoConnect(c)};
+async function setMany(c,rows){let n=0;for(const[name,value]of rows){await api(c,'console_set',{name,value:String(value??'')});n++}return n}
+
+/* ---------------- Google sign-in (Luv) ---------------- */
+function gate(){const box=h('div',{class:'gate glass'},h('div',{class:'mark','aria-hidden':'true'},'SL'),h('h1',null,'scalewithluv ',h('em',null,'console')),h('p',null,'Every client’s plan, switches, limits, AI models, billing and offboarding.'),h('div',{id:'gbtn'}),
+  h('p',{class:'hint'},'Only Luv’s Google account opens a client: each client’s sheet checks it, together with that client’s console key.'),
+  LOCAL?h('button',{class:'btn',onclick:()=>{S.me={email:'kapruwanluv@gmail.com',name:'Luv (test)'};draw()}},'Test mode (local stand-in only)'):null);
+  $('#app').replaceChildren(box);
+  const go=()=>{if(!S.reg.google_client_id){box.append(h('p',{class:'err'},'No Google client id in clients.json.'));return}
+    google.accounts.id.initialize({client_id:S.reg.google_client_id,auto_select:true,callback:r=>{S.idToken=r.credential;if(S.tokWait){const w=S.tokWait;S.tokWait=null;w(r.credential)}try{const p=JSON.parse(atob(r.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));S.me={email:p.email,name:p.name}}catch(e){S.me={email:'?'}}draw()},ux_mode:'popup'});
+    google.accounts.id.renderButton($('#gbtn'),{theme:'outline',size:'large',shape:'pill',text:'signin_with',width:260});
+    google.accounts.id.prompt()};   // signed in before: Google signs you straight in
+  if(window.google&&google.accounts)go();else{const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=go;s.onerror=()=>box.append(h('p',{class:'err'},'Google sign-in didn’t load.'));document.head.append(s)}}
+
+/* ---------------- the page ---------------- */
+function draw(){if(!S.reg)return;if(!S.me)return gate();
+  const top=h('header',{class:'top'},h('button',{class:'brand',style:{background:'none',border:0,padding:0,cursor:'pointer'},'aria-label':'Home',onclick:()=>open('home')},h('div',{class:'mark','aria-hidden':'true'},'SL'),h('span',null,h('span',{class:'bw'},'scalewithluv '),h('em',null,'console'))),h('span',{class:'grow'}),
+    h('button',{class:'kbtn',onclick:cmdk,'aria-label':'Search and commands'},icon('search'),h('span',{class:'lbl'},'Search or jump…'),h('span',{class:'kbd'},/Mac|iP/.test(navigator.platform)?'⌘K':'Ctrl K')),
+    h('div',{class:'me',title:S.me.email||''},h('img',{src:'img/luv.jpg',alt:''}),h('span',null,String(S.me.name||'Luv').split(' ')[0])),
+    h('button',{class:'btn sm',onclick:addClient,'aria-label':'Add a client'},'+',h('span',{class:'bw'},' Client')));
+  const list=h('div',{class:'list'},h('button',{class:'cl homeb tilt','aria-current':S.sel==='home'?'true':'false',onclick:()=>open('home')},h('span',{class:'av'},icon('home')),h('b',null,'All clients')),
+    S.reg.clients.map(c=>{const st=S.st[c.id],P=st&&st.plan;
+    return h('button',{class:'cl tilt','aria-current':S.sel===c.id?'true':'false',onclick:()=>open(c.id)},
+      h('div',{class:'cl-h'},avatar(c),h('b',null,c.name),dot(c)),h('div',{class:'chips'},!sess(c)?h('span',{class:'chip'},'not connected'):P?[h('span',{class:'chip acc'},(SWL.TIERS.find(t=>t.k===P.tier)||{}).name||'No plan set'),billChip(P),h('span',{class:'chip'},`${st.counts.stays} stays`)]:h('span',{class:'chip'},S.busy[c.id]?'loading…':'connected')))}),
+    !S.reg.clients.length?h('div',{class:'empty'},'No clients yet.'):null);
+  const c=client(S.sel);
+  $('#app').replaceChildren(top,h('div',{class:'wrap'+(c?'':' is-home')},h('aside',null,h('div',{class:'card'},h('h2',null,'Clients'),h('p',{class:'hint'},'Tap one to manage it.'),list)),h('main',null,c?detail(c):home())));
+  slideTabs();countUps()}
+const billChip=P=>{const s=P.status||'active';return h('span',{class:'chip '+(s==='active'?'ok':s==='grace'?'warn':'bad')},s==='active'?'Paid':s==='grace'?'Payment due':s==='readonly'?'Read-only':'Switched off')};
+
+function detail(c){const st=S.st[c.id];
+  if(!sess(c)){const key=h('input',{type:'password',placeholder:'Console key (CONSOLE_KEY)',autocomplete:'off',value:ls.get('swl_key_'+c.id,'')}),err=h('div',{class:'err'},(S.connErr||{})[c.id]||'');
+    return h('div',{class:'card'},h('h2',null,c.name),h('p',{class:'hint'},'Connect with this client’s console key. It is kept only in this browser. A session lasts 12 hours.'),
+      h('div',{class:'form'},h('label',{class:'f'},'Console key',key)),err,h('div',{style:{marginTop:'12px',display:'flex',gap:'8px',flexWrap:'wrap'}},
+        h('button',{class:'btn primary',onclick:async e=>{e.currentTarget.disabled=true;err.textContent='';(S.connErr=S.connErr||{})[c.id]='';const k=key.value.trim().replace(/^CONSOLE_KEY\s*=\s*/,'').replace(/^["']|["']$/g,'');try{await connect(c,k);await refresh(c)}catch(x){S.connErr[c.id]=x.message==='unauthorized'?'Refused: wrong console key, or not Luv’s Google account. Copy only the value after CONSOLE_KEY= in the client’s .env.':x.message;draw()}}},'Connect'),
+        h('button',{class:'btn',onclick:()=>removeClient(c)},'Remove from console')),links(c))}
+  if(!st){if(!S.busy[c.id])setTimeout(()=>refresh(c));return skeleton(c)}
+  if(st.error)return h('div',{class:'card'},h('h2',null,c.name),h('p',{class:'err'},st.error),h('button',{class:'btn',onclick:()=>refresh(c)},'Try again'));
+  const nT=(st.tickets||[]).filter(t=>t.status==='open').length;
+  const T=[['overview','Overview'],['health','Health'],['support','Help'+(nT?' · '+nT:'')],['plan','Plan'],['switches','Features & limits'],['models','AI models'],['billing','Billing'],['setup','Setup'],['offboard','Offboarding'],['links','Links']];
+  const body={overview,health:healthTab,support:supportTab,setup:setupTab,plan:planTab,switches,models,billing,offboard,links:()=>links(c)}[S.tab](c,st);
+  return h('div',{class:'card'},h('div',{style:{display:'flex',alignItems:'center',gap:'10px',flexWrap:'wrap'}},h('h2',{style:{margin:0}},c.name),h('span',{class:'chips'},billChip(st.plan)),h('span',{class:'grow'}),
+      h('button',{class:'btn sm',onclick:()=>refresh(c)},S.busy[c.id]?'Refreshing…':'Refresh'),h('button',{class:'btn sm',onclick:()=>{ls.del('swl_sess_'+c.id);S.st[c.id]=null;draw()}},'Disconnect')),
+    h('div',{class:'hint'},`Sheet: ${st.client} · last change ${st.last_change||'–'}`),
+    (x=>h('div',{class:'health'},h('span',null,dot(c),'Sheet '+x.sheet),c.bot_url?h('span',null,h('span',{class:'dot '+(S.ping[c.id]==='ok'?'ok':S.ping[c.id]==='bad'?'bad':'')}),'Bot '+x.bot):null))(health(c)),
+    h('div',{class:'tabs',role:'tablist'},h('span',{class:'ind','aria-hidden':'true'}),T.map(([k,l])=>h('button',{role:'tab','aria-pressed':S.tab===k?'true':'false',onclick:()=>{S.tab=k;if(k==='overview')forget(c.id+':');draw()}},l))),body)}
+function skeleton(c){const b=(w,hh,m)=>h('span',{class:'sk',style:{width:w,height:hh+'px',margin:m||'0'}});
+  return h('div',{class:'card','aria-busy':'true','aria-label':'Loading '+(c?c.name:'')},b('42%',20,'2px 0 10px'),b('60%',12,'0 0 18px'),b('100%',40,'0 0 18px'),
+    h('div',{class:'kpis'},[0,1,2,3,4,5].map(()=>b('100%',62))),b('30%',11,'22px 0 10px'),h('div',{class:'kpis'},[0,1,2,3].map(()=>b('100%',62))))}
+
+function overview(c,st){const P=st.plan,k=st.counts,m=st.month,tier=SWL.TIERS.find(t=>t.k===P.tier)||(P.tier==='custom'?{name:'Custom'}:null),K=c.id+':';
+  const kpi=(l,...v)=>h('div',{class:'kpi tilt'},h('span',null,l),h('b',null,...v));
+  const lim=(n,l,key)=>[num(K+key,n),P.limits&&P.limits[l]?h('small',{class:'hint'},' of '+P.limits[l]):null];
+  const tr=trendOf(st);
+  const pend=pendingOf(st);
+  return h('div',null,pend.length?h('div',{class:'inbox-card'},h('h3',{style:{marginTop:0}},'Change requested'),h('div',{class:'rows'},pend.map(r=>reqRow(c,st,r)))):null,
+    h('div',{class:'kpis'},kpi('Plan',tier?tier.name:'Not set'),kpi('Stays',...lim(k.stays,'stays','stays')),kpi('Cities',...lim(k.cities,'cities','cities')),kpi('Managers',...lim(k.managers,'managers','mgr')),
+      kpi('Dashboard logins',...lim(k.admins+k.viewers,'logins','logins')),kpi('Bookings this month',num(K+'bm',k.bookings_month))),
+    h('h3',null,'This month'),h('div',{class:'kpis'},kpi('AI cost',num(K+'ai',m.ai_cost_inr,'r2')),kpi('AI replies',num(K+'air',m.ai_replies)),kpi('WhatsApp to guests',num(K+'wg',m.wa_guest)),kpi('To owners · managers',num(K+'wo',m.wa_owner),' · ',num(K+'wm',m.wa_manager))),
+    null,
+    tr?h('div',null,h('h3',null,'Last 6 months'),h('div',{class:'kpis'},h('div',{class:'kpi tilt'},h('span',null,'Bookings by month'),spark(tr.map(t=>t.bookings),'Bookings by month: '+tr.map(t=>t.month+' '+t.bookings).join(', '))),
+      h('div',{class:'kpi tilt'},h('span',null,'AI cost by month'),spark(tr.map(t=>t.ai_cost_inr),'AI cost by month: '+tr.map(t=>t.month+' ₹'+t.ai_cost_inr).join(', '))))):null,
+    h('h3',null,'Features now'),h('div',{class:'chips'},SWL.FEATURES.map(f=>{const v=String((P.features||{})[f.k]||'');const on=f.offByDefault?/^(on|yes|true|1)$/i.test(v):!/^(off|no|false|0)$/i.test(v);
+      return h('span',{class:'chip '+(on?'ok':'')},(on?'✓ ':'· ')+f.name)})),
+    !P.tier?h('p',{class:'hint',style:{marginTop:'12px'}},'No plan rows yet: this client runs with everything on (as before the console), except the AI photo check. Pick a plan to set it.'):null)}
+
+/* plan: tier + add-ons -> the rows it would write; review the change, then save */
+function planTab(c,st){const P=st.plan,cur=S.draft&&S.draft.id===c.id?S.draft:(S.draft={id:c.id,tier:P.tier==='starter'?'base':(P.tier||'pro'),addons:[...(ls.get('swl_addons_'+c.id,[]))],custom:ls.get('swl_custom_'+c.id,null)});
+  /* Custom: Luv's own price, switches and limits for one client (starts from a tier, then edit anything) */
+  const seed=k=>{const b=SWL.compose(k,[]);return {from:k,price:b.price,features:{...b.features},limits:{...b.limits}}};
+  if(!cur.custom)cur.custom=P.tier==='custom'?{from:'',price:+(((st.settings||[]).find(r=>r.key==='console.billing.amount')||{}).value)||0,features:{...SWL.compose('pro',[]).features,...P.features},limits:{...SWL.compose('pro',[]).limits,...P.limits}}:seed('growth');
+  const isC=cur.tier==='custom',cu=cur.custom;
+  const comp=isC?{features:{...cu.features},limits:{...cu.limits},models:{...SWL.DEFAULT_MODELS,...((SWL.TIERS.find(t=>t.k===cu.from)||SWL.TIERS[2]).models||{})},price:+cu.price||0}:SWL.compose(cur.tier,cur.addons);
+  const tiers=h('div',{class:'tiers'},SWL.TIERS.map(t=>h('button',{class:'tier tilt','aria-pressed':cur.tier===t.k?'true':'false',onclick:()=>{cur.tier=t.k;draw()}},t.k==='growth'?h('span',{class:'ribbon'},'Most popular'):null,h('b',null,t.name),h('div',{class:'pr'},inr(t.price),h('small',{class:'hint'},' /month')),h('div',{class:'hint'},t.blurb),
+    h('ul',null,t.features.map(k=>h('li',null,(SWL.FEATURES.find(f=>f.k===k)||{}).name)),h('li',null,`${t.limits.stays} stays · ${t.limits.cities} cit${t.limits.cities===1?'y':'ies'} · ${t.limits.managers} manager${t.limits.managers===1?'':'s'} · ${t.limits.logins} logins`)))),
+    h('button',{class:'tier tilt','aria-pressed':isC?'true':'false',onclick:()=>{cur.tier='custom';draw()}},h('b',null,'Custom'),h('div',{class:'pr'},isC?inr(cu.price):'Your price',h('small',{class:'hint'},isC?' /month':'')),
+      h('div',{class:'hint'},'For one client: set the price, every switch and every limit yourself.'),h('ul',null,h('li',null,'Starts from any tier'),h('li',null,'No add-ons: everything is in the price'))));
+  const tier=SWL.TIERS.find(t=>t.k===cur.tier);
+  const adds=isC?null:h('div',{class:'rows'},SWL.ADDONS.filter(a=>!a.feature||!tier.features.includes(a.feature)).map(a=>{const n=cur.addons.filter(x=>x===a.k).length,on=n>0;
+    if(a.stack)return h('div',{class:'row'},h('div',{class:'t'},h('b',null,a.name),h('small',null,inr(a.price)+' a month each'+(n?' · ×'+n+' = '+inr(a.price*n):''))),   // volume add-ons stack
+      h('div',{class:'qty'},h('button',{class:'btn',disabled:!n,'aria-label':'One fewer '+a.name,onclick:()=>{cur.addons.splice(cur.addons.indexOf(a.k),1);draw()}},'−'),h('b',null,String(n)),
+        h('button',{class:'btn','aria-label':'One more '+a.name,onclick:()=>{cur.addons.push(a.k);draw()}},'+')));
+    return h('div',{class:'row'},h('div',{class:'t'},h('b',null,a.name),h('small',null,'+'+inr(a.price)+' a month')),h('button',{class:'sw',role:'switch','aria-checked':on?'true':'false','aria-label':a.name,onclick:()=>{on?cur.addons.splice(cur.addons.indexOf(a.k),1):cur.addons.push(a.k);draw()}}))}));
+  const custom=!isC?null:h('div',null,
+    h('div',{class:'form'},h('label',null,'Start from',h('select',{onchange:e=>{if(e.target.value){cur.custom=seed(e.target.value);draw()}}},h('option',{value:''},'Pick a tier to copy…'),...SWL.TIERS.map(t=>h('option',{value:t.k},t.name+' ('+inr(t.price)+')')))),
+      h('label',null,'Price a month (₹)',h('input',{type:'number',min:'0',step:'500',inputmode:'numeric',value:String(cu.price||''),oninput:e=>{cu.price=Math.max(0,+e.target.value||0);const pr=document.getElementById('cpr');if(pr){pr.dataset.to=String(cu.price);countUps()}}}))),
+    h('h3',null,'Features'),h('div',{class:'rows'},SWL.FEATURES.filter(f=>!f.base).map(f=>{const on=cu.features[f.k]==='on';
+      return h('div',{class:'row'},h('div',{class:'t'},h('b',null,f.name),h('small',null,f.what)),h('button',{class:'sw',role:'switch','aria-checked':on?'true':'false','aria-label':f.name,onclick:()=>{cu.features[f.k]=on?'off':'on';draw()}}))})),
+    h('h3',null,'Limits'),h('div',{class:'form'},SWL.LIMITS.map(l=>h('label',null,l.name,h('input',{type:'number',min:'0',step:'1',inputmode:'numeric',value:String(cu.limits[l.k]??0),oninput:e=>{cu.limits[l.k]=Math.max(0,Math.floor(+e.target.value||0))}})))));
+  return h('div',null,h('p',{class:'hint'},'Tiers and prices for review. Saving writes the plan’s switches, limits and models to the client’s sheet.'),tiers,compareTable(),
+    isC?custom:h('h3',null,'Add-ons'),adds,
+    h('div',{class:'total glass'},h('div',null,h('small',null,'Total '),h('span',{class:'n'},h('span',{id:'cpr','data-k':c.id+':total','data-to':String(comp.price),'data-fmt':'inr'},inr(comp.price))),h('small',null,' a month')),h('span',{class:'grow'}),
+      h('button',{class:'btn primary',onclick:()=>{const cp=isC?{...comp,features:{...cu.features},limits:{...cu.limits},price:+cu.price||0}:comp;
+        review(c,st,planRows(cur.tier,isC?[]:cur.addons,cp),()=>{ls.set('swl_addons_'+c.id,isC?[]:cur.addons);if(isC)ls.set('swl_custom_'+c.id,cu)})}},'Review & save')))}
+/* ---- Health: is everything up, versions, AI spend by day, the daily check, backups, key dates, a guest's data ---- */
+function healthTab(c,st){const H=st.health||{},V=S.ver[c.id]||{},D=st.days||[],A=alertsOf(c);
+  const line=(ok,label,val)=>h('div',{class:'row'},h('span',{class:'dot '+(ok===true?'ok':ok===false?'bad':ok==='warn'?'warn':'')}),h('div',{class:'t'},h('b',null,label)),h('span',null,val));
+  const lp=String(H.last_push||''),stale=lp&&Date.now()-new Date(lp.length<=10?lp+'T23:59:00':lp).getTime()>26*3600e3;
+  const vv=(have,latest)=>have==null?'–':have===''?'unknown':`v${have}`+(latest&&cmpV(have,latest)<0?` · latest v${latest}`:' ✓');
+  const keys=Object.entries(st.keys||{});const kn=h('input',{placeholder:'e.g. WhatsApp token'}),kd=h('input',{type:'date'});
+  const saveKeys=obj=>review(c,st,[['console.keys',Object.keys(obj).length?JSON.stringify(obj):'']]);
+  const ph=h('input',{type:'tel',inputmode:'tel',placeholder:'Guest phone, 10 digits'}),gOut=h('div');
+  return h('div',null,
+    A.length?h('div',{class:'inbox-card'},h('h3',{style:{marginTop:0}},'Needs a look'),h('ul',{class:'al-list'},A.map(a=>h('li',{class:'al '+a.lvl},a.text)))):h('p',{class:'okt'},'✓ Everything looks healthy.'),
+    h('h3',null,'Status'),h('div',{class:'rows'},
+      line(true,'Sheet','reachable · '+st.client),
+      c.bot_url?line(S.ping[c.id]==='ok'?true:S.ping[c.id]==='bad'?false:null,'Bot',S.ping[c.id]==='ok'?'online':S.ping[c.id]==='bad'?'not answering':'checking…'):null,
+      line(!lp?null:stale?'warn':true,'Bot last synced its counters',lp?fmtD(lp.slice(0,10))+(lp.length>10?' '+lp.slice(11,16)+' UTC':''):'never'),
+      line((H.failed_24h||0)>10?'warn':true,'Failed / refused sheet calls (24 h)',`${H.failed_24h||0} / ${H.blocked_24h||0}`),
+      ...(()=>{const Y=st.sync;if(!Y)return[line(null,'Calendar sync','needs Code.gs v1.49')];const at=t=>t?fmtD(String(t).slice(0,10))+' '+String(t).slice(11,16)+' UTC':'never';
+        return[line(!Y.links?null:Y.down||!Y.on?'warn':true,'Calendar sync',Y.links?`${Y.links} link${Y.links>1?'s':''} · ${Y.down?Y.down+' failing · ':''}${Y.on?'every 3 h':'not scheduled'} · ${at(Y.at)}`:'not set up by the client'),
+          line(Y.holidays_at?true:null,'Holiday feed',Y.holidays_at?`read ${at(Y.holidays_at)}`:'not read yet')]})(),
+      line(!setting(st,'console.heartbeat_url')?null:st.heartbeat_at&&Date.now()-new Date(st.heartbeat_at).getTime()<26*3600e3?true:'warn','Daily heartbeat',setting(st,'console.heartbeat_url')?(st.heartbeat_at?'last '+fmtD(st.heartbeat_at.slice(0,10))+' '+st.heartbeat_at.slice(11,16)+' UTC':'not sent yet'):'not set')),
+    h('details',{class:'hb'},h('summary',{class:'hint'},'Heartbeat link (free uptime alert)'),
+      h('p',{class:'hint'},'Make a free check at healthchecks.io (period 1 day, grace 2 h) and paste its ping link. The daily check pings it; if a day is missed you get an email. For the bot, set HEARTBEAT_URL on Render to a second check (period 5 min).'),
+      (()=>{const i=h('input',{type:'url',placeholder:'https://hc-ping.com/…',value:setting(st,'console.heartbeat_url')||''});
+        return h('div',{style:{display:'flex',gap:'8px',flexWrap:'wrap'}},i,h('button',{class:'btn sm primary',onclick:()=>{const v=i.value.trim();if(v&&!/^https:\/\//.test(v)){toast('Use the https:// ping link');return}review(c,st,[['console.heartbeat_url',v]])}},'Save'))})()),
+    h('h3',null,'Versions'),h('div',{class:'rows'},
+      line(st.code_version&&cmpV(st.code_version,REL.code)>=0?true:'warn','Code.gs (sheet script)',st.code_version?vv(st.code_version,REL.code):'older than v1.48'),
+      c.bot_url?line(V.engine?cmpV(V.engine,REL.engine)>=0?true:'warn':null,'Bot (engine)',vv(V.engine,REL.engine)):null,
+      c.dashboard_url?line(V.dashboard?cmpV(V.dashboard,REL.dashboard)>=0?true:'warn':null,'Dashboard',vv(V.dashboard,REL.dashboard)):null),
+    h('div',{style:{display:'flex',gap:'8px',flexWrap:'wrap',marginTop:'10px'}},h('button',{class:'btn sm',onclick:async()=>{try{const t=await (await fetch('dist/Code.gs?'+Date.now())).text();await navigator.clipboard.writeText(t);toast(`Code.gs v${REL.code} copied ✓ - paste it in Apps Script, then deploy a new version`)}catch(e){toast('Couldn’t copy: '+e.message)}}},'Copy latest Code.gs'),
+      h('button',{class:'btn sm',onclick:()=>{ping(c);versions(c);refresh(c)}},'Check again')),
+    D.length?h('div',null,h('h3',null,'AI spend, last 14 days'),h('div',{class:'kpi'},bars(D.map(d=>d.ai_cost_inr),'AI spend by day'),h('small',{class:'hint'},`${inr(D.reduce((a,d)=>a+d.ai_cost_inr,0))} in 14 days · today in yellow`))):null,
+    h('h3',null,'Daily check & nightly backup'),h('div',{class:'row'},h('div',{class:'t'},h('b',null,'Every morning at 7'),h('small',null,'backs the sheet up every night (newest 14 kept) and emails you if anything above turns red')),
+      h('button',{class:'sw',role:'switch','aria-checked':st.daily_on?'true':'false','aria-label':'Daily check',onclick:async e=>{e.currentTarget.disabled=true;try{await api(c,'console_daily',{on:!st.daily_on});toast(st.daily_on?'Daily check off ✓':'Daily check on ✓');refresh(c)}catch(x){toast(x.message);e.currentTarget.disabled=false}}})),
+    h('div',{class:'row'},h('div',{class:'t'},h('b',null,`Backups · ${(st.backups||[]).length}`),h('small',null,(st.backups||[])[0]?'latest '+st.backups[0].name.replace(/^.* backup /,''):'none yet')),
+      h('button',{class:'btn sm primary',onclick:async e=>{const b=e.currentTarget;b.disabled=true;b.textContent='Backing up…';try{const j=await api(c,'console_backup');toast('Backed up ✓');refresh(c)}catch(x){toast('Backup failed: '+x.message);b.disabled=false;b.textContent='Back up now'}}},'Back up now')),
+    (st.backups||[]).length?h('details',null,h('summary',{class:'hint'},'All backups · restore one tab from any of them'),h('ul',null,st.backups.map(b=>h('li',null,b.url?h('a',{href:b.url,target:'_blank',rel:'noopener'},b.name.replace(/^.* backup /,'')):b.name,' ',b.id?h('button',{class:'btn sm',onclick:()=>restoreTab(c,b)},'Restore a tab…'):null)))):null,
+    h('h3',null,'Key & token expiry'),h('div',{class:'rows'},keys.map(([k,d])=>{const n=daysTo(String(d).slice(0,10));return h('div',{class:'row'},h('div',{class:'t'},h('b',null,k),h('small',null,fmtD(String(d).slice(0,10))+(n<=0?' · expired':` · ${n} days left`))),
+      h('button',{class:'btn sm',onclick:()=>{const o={...st.keys};delete o[k];saveKeys(o)}},'Remove'))})),
+    h('div',{class:'form',style:{marginTop:'8px'}},h('label',{class:'f'},'Key or token',kn),h('label',{class:'f'},'Expires on',kd),h('div',{style:{alignSelf:'end'}},h('button',{class:'btn',onclick:()=>{if(!kn.value.trim()||!kd.value)return toast('Name and date');saveKeys({...(st.keys||{}),[kn.value.trim()]:kd.value})}},'Add'))),
+    h('p',{class:'hint'},'Reminders 14 and 3 days before, in the daily email and on Home.'),
+    h('h3',null,'A guest’s data (DPDP)'),h('div',{class:'form'},h('label',{class:'f'},'Phone',ph),h('div',{style:{alignSelf:'end'}},h('button',{class:'btn',onclick:async()=>{gOut.replaceChildren(h('small',{class:'hint'},'Looking…'));
+      try{const j=await api(c,'console_guest',{phone:ph.value});const n=Object.entries(j.tabs).filter(([,r])=>r.length);
+        gOut.replaceChildren(h('p',null,n.length?n.map(([t,r])=>`${t} ${r.length}`).join(' · '):'Nothing found for this number.'),n.length?h('div',{style:{display:'flex',gap:'8px',flexWrap:'wrap'}},
+          h('button',{class:'btn sm',onclick:()=>{const a=h('a',{href:URL.createObjectURL(new Blob([JSON.stringify(j,null,2)],{type:'application/json'})),download:`guest-${j.phone.slice(-4)}-${TODAY}.json`});a.click()}},'Download (for the guest)'),
+          h('button',{class:'btn sm danger',onclick:()=>{const typed=h('input',{placeholder:'ERASE '+j.phone.slice(-4),autocomplete:'off'});modal('Erase this guest’s data?',h('div',null,h('p',null,'Their name and phone go from bookings (amounts and dates stay for the accounts), ID details are deleted, and enquiries are anonymised. This can’t be undone.'),h('label',{class:'f'},'Type ERASE '+j.phone.slice(-4),typed)),
+            close=>[h('button',{class:'btn',onclick:close},'Keep'),h('button',{class:'btn danger',onclick:async e=>{e.currentTarget.disabled=true;try{const r=await api(c,'console_guest_erase',{phone:j.phone,confirm:typed.value.trim()});close();toast('Erased ✓');gOut.replaceChildren(h('p',{class:'okt'},'Erased: '+Object.entries(r.erased).map(([k,v])=>`${k} ${v}`).join(', ')))}catch(x){toast(x.message);e.currentTarget.disabled=false}}},'Erase')])}},'Erase')):null)}
+      catch(x){gOut.replaceChildren(h('p',{class:'err'},x.message))}}},'Find'))),gOut)}
+
+/* ---- Help: questions from the client's dashboard and manager app; replies show in their app ---- */
+function supportTab(c,st){const T_=st.tickets||[];
+  if(!T_.length)return h('div',{class:'empty'},'No help requests yet. They come from ☰ › Help in the client’s dashboard and manager app.');
+  return h('div',{class:'rows'},T_.map(t=>{const r=h('textarea',{rows:2,placeholder:'Your reply (they see it in the app)'},t.reply||'');
+    return h('div',{class:'tk'+(t.status==='open'?' open':'')},h('div',{class:'tk-h'},h('b',null,t.name||t.by),h('span',{class:'chip'},t.role||''),h('span',{class:'chip '+(t.status==='open'?'warn':'ok')},t.status),h('span',{class:'grow'}),h('small',{class:'hint'},fmtD(String(t.at).slice(0,10))+' · '+(t.page||''))),
+      h('p',{class:'tk-m'},t.message),h('div',{class:'tk-a'},r,h('div',{style:{display:'flex',gap:'8px',flexWrap:'wrap'}},
+        h('button',{class:'btn sm primary',onclick:async e=>{e.currentTarget.disabled=true;try{await api(c,'console_reply',{id:t.ticket_id,reply:r.value.trim(),status:'answered'});toast('Reply sent ✓');refresh(c)}catch(x){toast(x.message);e.currentTarget.disabled=false}}},'Reply'),
+        t.status!=='closed'?h('button',{class:'btn sm',onclick:async()=>{try{await api(c,'console_reply',{id:t.ticket_id,status:'closed'});toast('Closed ✓');refresh(c)}catch(x){toast(x.message)}}},'Close'):null)))}))}
+
+/* ---- Setup: the new-client checklist (playbook 11); auto checks tick themselves, the rest are ticked by hand ---- */
+const SETUP=[['A','Discovery',[['bot_type','Bot type, number strategy (new number or Coexistence), owner decisions written down'],['quote','Quote and costs agreed']]],
+  ['B','Accounts & keys',[['meta','Meta business portfolio → app → WhatsApp product; system-user token'],['verify','Business verification submitted'],['oauth','Google sign-in: a Web OAuth client with the dashboard’s origin'],['brand','Logo files and wordmarks']]],
+  ['C','Client repo & register',[['repo','wa-<client> repo from the engine + dashboard foundation'],['sheet','Register sheet built, Code.gs pasted, BOT_KEY / DASHBOARD_KEY / CONSOLE_KEY set'],['templates','Journey templates submitted to Meta (utility)'],['cards','Guest cards: Wi-Fi, check-in steps per stay']]],
+  ['D','Tests',[['tests','Scenario + guardrail suites green; report shared with the client']]],
+  ['E','Deploy',[['render','Render service: always on, disk, health check /'],['webhook','Webhook URL + verify token in Meta; real “hi” gets a reply']]]];
+function setupTab(c,st){let done={};try{done=JSON.parse(setting(st,'console.setup')||'{}')}catch(e){}
+  const V=S.ver[c.id]||{},auto=[['Sheet connected to the console',!st.error],['Code.gs on the latest version',!!st.code_version&&cmpV(st.code_version,REL.code)>=0],['Bot online',S.ping[c.id]==='ok'],
+    ['Dashboard live',!!V.dashboard||!!V.build],['Prices published',!!setting(st,'console.catalog')],['Plan set',!!st.plan.tier],['Billing due date set',!!setting(st,'console.billing.due')],['Daily check & backups on',!!st.daily_on],['First backup taken',(st.backups||[]).length>0],['Key expiry dates recorded',Object.keys(st.keys||{}).length>0]];
+  const all=SETUP.flatMap(g=>g[2]),nDone=all.filter(([k])=>done[k]).length+auto.filter(a=>a[1]).length,nAll=all.length+auto.length;
+  const tick=(k,on)=>review(c,st,[['console.setup',JSON.stringify({...done,[k]:on?TODAY:undefined})]]);
+  return h('div',null,h('div',{class:'kpis'},h('div',{class:'kpi'},h('span',null,'Setup'),h('b',null,`${nDone} of ${nAll}`),h('i',{class:'pbar'},h('i',{style:`width:${nDone/nAll*100}%`})))),
+    h('h3',null,'Checked by the console'),h('div',{class:'rows'},auto.map(([l,ok])=>h('div',{class:'row'},h('span',{class:'dot '+(ok?'ok':'')}),h('div',{class:'t'},h('b',null,l)),h('span',{class:ok?'okt':'hint'},ok?'✓':'not yet')))),
+    SETUP.map(([n,title,steps])=>h('div',null,h('h3',null,`${n} · ${title}`),h('div',{class:'rows'},steps.map(([k,l])=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,l),done[k]?h('small',null,'done '+fmtD(done[k])):null),
+      h('button',{class:'sw',role:'switch','aria-checked':done[k]?'true':'false','aria-label':l,onclick:()=>tick(k,!done[k])})))))),
+    h('p',{class:'hint'},'The full checklist, with the why behind each step: whatsapp-agent-playbook › 11-new-client-checklist.md'))}
+
+/* ---- tools for every client at once: an announcement, one switch for all ---- */
+function announceTool(){const on=S.reg.clients.filter(c=>sess(c)&&S.st[c.id]&&!S.st[c.id].error),txt=h('textarea',{rows:3,maxlength:400,placeholder:'e.g. New: Plan & billing in Manage. Ask us anything from ☰ › Help.'}),
+    lvl=h('select',null,[['info','Info'],['ok','Good news'],['warn','Heads-up']].map(([v,l])=>h('option',{value:v},l))),until=h('input',{type:'date',value:addDays(TODAY,14)}),pick=new Set(on.map(c=>c.id));
+  modal('Announcement to dashboards',h('div',null,h('label',{class:'f'},'Message',txt),h('div',{class:'form'},h('label',{class:'f'},'Tone',lvl),h('label',{class:'f'},'Show until',until)),
+    h('h3',null,'Clients'),h('div',{class:'rows'},on.map(c=>h('label',{class:'row'},h('input',{type:'checkbox',checked:true,onchange:e=>e.target.checked?pick.add(c.id):pick.delete(c.id)}),h('span',null,c.name)))),
+    h('p',{class:'hint'},'Each admin and manager sees it once and can dismiss it.')),
+    close=>[h('button',{class:'btn',onclick:async()=>{for(const c of on.filter(x=>pick.has(x.id)))try{await api(c,'console_set',{name:'console.announce',value:''})}catch(e){}close();toast('Announcement cleared ✓')}},'Clear it'),
+      h('button',{class:'btn primary',onclick:async e=>{if(txt.value.trim().length<3)return toast('Write the message');e.currentTarget.disabled=true;const a=JSON.stringify({id:Date.now().toString(36),text:txt.value.trim(),level:lvl.value,until:until.value});let n=0;
+        for(const c of on.filter(x=>pick.has(x.id)))try{await api(c,'console_set',{name:'console.announce',value:a});n++}catch(x){}close();toast(`Shown on ${n} dashboard${n===1?'':'s'} ✓`)}},'Publish')])}
+function fleetSwitch(){const on=S.reg.clients.filter(c=>sess(c)&&S.st[c.id]&&!S.st[c.id].error),kind=h('select',null,[['feature','A feature'],['model','An AI model'],['beta','A beta flag']].map(([v,l])=>h('option',{value:v},l)));
+  const what=h('select'),val=h('select'),beta=h('input',{placeholder:'flag name, e.g. new_calendar',hidden:true}),pick=new Set(on.map(c=>c.id));
+  const fill=()=>{const k=kind.value;beta.hidden=k!=='beta';what.hidden=k==='beta';
+    what.replaceChildren(...(k==='feature'?SWL.FEATURES.map(f=>h('option',{value:f.k},f.name)):k==='model'?SWL.FEATURES.filter(f=>f.model).map(f=>h('option',{value:f.model},f.name)):[]));
+    val.replaceChildren(...(k==='model'?SWL.MODELS.map(([v,l])=>h('option',{value:v},l)):[h('option',{value:'off'},'Off'),h('option',{value:'on'},'On')]))};kind.addEventListener('change',fill);fill();
+  modal('One switch for many clients',h('div',null,h('div',{class:'form'},h('label',{class:'f'},'Change',kind),h('label',{class:'f'},'Which',what,beta),h('label',{class:'f'},'Set to',val)),
+    h('h3',null,'Clients'),h('div',{class:'rows'},on.map(c=>h('label',{class:'row'},h('input',{type:'checkbox',checked:true,onchange:e=>e.target.checked?pick.add(c.id):pick.delete(c.id)}),h('span',null,c.name)))),
+    h('p',{class:'hint'},'Written to each client’s sheet and logged in their History. A kill switch: e.g. turn the photo check off everywhere at once.')),
+    close=>[h('button',{class:'btn',onclick:close},'Cancel'),h('button',{class:'btn primary',onclick:async e=>{const k=kind.value,name=k==='beta'?'console.beta.'+beta.value.trim().toLowerCase().replace(/[^a-z0-9_]+/g,'_'):`console.${k}.${what.value}`;
+      if(k==='beta'&&!beta.value.trim())return toast('Name the flag');e.currentTarget.disabled=true;let n=0;const bad=[];
+      for(const c of on.filter(x=>pick.has(x.id)))try{await api(c,'console_set',{name,value:val.value});n++}catch(x){bad.push(c.name)}
+      close();toast(bad.length?`Done for ${n}; failed: ${bad.join(', ')}`:`Set on ${n} client${n===1?'':'s'} ✓`);on.forEach(refresh)}},'Apply')])}
+
+/* every tier side by side: features, limits, price (Growth highlighted) */
+function compareTable(){const T=SWL.TIERS,hl=k=>k==='growth'?'hl':null,addon=k=>SWL.ADDONS.some(a=>a.feature===k);
+  const cell=(t,f)=>t.features.includes(f.k)?h('td',{class:[hl(t.k),'y'].filter(Boolean).join(' ')},'✓'):h('td',{class:[hl(t.k),addon(f.k)?'a':'n'].filter(Boolean).join(' ')},addon(f.k)?'add-on':'–');
+  return h('details',{class:'cmpd'},h('summary',null,'Compare plans'),h('div',{class:'tblw'},h('table',{class:'cmp'},
+    h('thead',null,h('tr',null,h('th',null,''),T.map(t=>h('th',{class:hl(t.k)},t.name,h('small',null,inr(t.price)+' /mo'))))),
+    h('tbody',null,SWL.FEATURES.map(f=>h('tr',null,h('td',null,f.name),T.map(t=>cell(t,f)))),
+      SWL.LIMITS.map(l=>h('tr',null,h('td',null,l.name),T.map(t=>h('td',{class:hl(t.k)},String(t.limits[l.k]??'–')))))))))}
+/* every console change: a before/after table first */
+function review(c,st,rows,after){const now=Object.fromEntries((st.settings||[]).map(r=>[r.key,sval(r.value)])),ch=rows.filter(([k,v])=>String(now[k]??'')!==String(v??''));
+  if(!ch.length)return toast('Nothing to change');
+  modal(`Change ${ch.length} setting${ch.length>1?'s':''} for ${c.name}?`,h('div',null,h('table',{class:'diff'},h('tr',null,h('th',null,'Setting'),h('th',null,'Now'),h('th',null,'New')),
+      ch.map(([k,v])=>{const sh=x=>{x=String(x);return x.length>70?x.slice(0,67)+'…':x};return h('tr',null,h('td',null,k.replace(/^console\./,'')),h('td',null,now[k]!=null&&now[k]!==''?h('s',null,sh(now[k])):h('span',{class:'hint'},'–')),h('td',null,h('ins',null,sh(v)||'(empty)')))})),
+    h('p',{class:'hint'},'Saved to the client’s sheet at once and logged in their History as critical.')),
+    close=>[h('button',{class:'btn',onclick:close},'Cancel'),h('button',{class:'btn primary',onclick:async e=>{e.currentTarget.disabled=true;try{await setMany(c,ch);close();toast('Saved ✓');after&&after();await refresh(c)}catch(x){toast('Couldn’t save: '+x.message);e.currentTarget.disabled=false}}},'Save')])}
+
+function switches(c,st){const P=st.plan,set=new Map();
+  const feat=h('div',{class:'rows'},SWL.FEATURES.filter(f=>!f.base).map(f=>{const v=String((P.features||{})[f.k]||''),on=f.offByDefault?/^(on|yes|true|1)$/i.test(v):!/^(off|no|false|0)$/i.test(v);let cur=on;
+    const sw=h('button',{class:'sw',role:'switch','aria-checked':on?'true':'false','aria-label':f.name,onclick:()=>{cur=!cur;sw.setAttribute('aria-checked',cur?'true':'false');set.set('console.feature.'+f.k,cur?'on':'off')}});
+    return h('div',{class:'row'},h('div',{class:'t'},h('b',null,f.name),h('small',null,f.what+(f.offByDefault?' · off unless switched on':''))),sw)}));
+  const lims=h('div',{class:'form'},SWL.LIMITS.map(l=>{const i=h('input',{type:'number',min:0,inputmode:'numeric',value:(P.limits||{})[l.k]||'',placeholder:'no limit',oninput:()=>set.set('console.limit.'+l.k,i.value)});return h('label',{class:'f'},l.name,i)}));
+  return h('div',null,h('p',{class:'hint'},'Switch one feature on or off for this client, on top of the plan. Off = greyed in their dashboard with “Upgrade”.'),feat,h('h3',null,'Limits'),lims,
+    h('div',{style:{marginTop:'14px'}},h('button',{class:'btn primary',onclick:()=>review(c,st,[...set.entries()])},'Review & save')))}
+
+function models(c,st){const P=st.plan,set=new Map();
+  const rows=SWL.FEATURES.filter(f=>f.model).map(f=>{const cur=(P.models||{})[f.model]||SWL.DEFAULT_MODELS[f.model];
+    const s=h('select',{'aria-label':f.name,onchange:e=>set.set('console.model.'+f.model,e.target.value)},SWL.MODELS.map(([v,l])=>h('option',{value:v,selected:v===cur||null},l)));
+    return h('div',{class:'row'},h('div',{class:'t'},h('b',null,f.name),h('small',null,(P.models||{})[f.model]?'set here':'default')),s)});
+  return h('div',null,h('p',{class:'hint'},'The AI model each feature uses for this client. Clients can’t change it. Guest replies use the bot’s own model setting (config).'),h('div',{class:'rows'},rows),
+    h('div',{style:{marginTop:'14px'}},h('button',{class:'btn primary',onclick:()=>review(c,st,[...set.entries()])},'Review & save')))}
+
+/* billing: manual tracker until Razorpay; auto = past due -> 5-day grace -> read-only, by the sheet itself */
+function billing(c,st){const P=st.plan,now=Object.fromEntries((st.settings||[]).map(r=>[r.key,sval(r.value)]));
+  const status=h('select',null,[['active','Paid / active'],['grace','Payment due (grace)'],['readonly','Read-only (bot paused)'],['off','Switched off']].map(([v,l])=>h('option',{value:v,selected:(now['console.billing.status']||'active')===v||null},l)));
+  const due=h('input',{type:'date',value:(now['console.billing.due']||'').slice(0,10)}),amt=h('input',{type:'number',min:0,value:now['console.billing.amount']||''}),auto=h('select',null,[['on','Automatic from the due date'],['off','Manual (I set the status)']].map(([v,l])=>h('option',{value:v,selected:(now['console.billing.auto']||'on')===v||null},l)));
+  const notes=h('input',{value:now['console.billing.notes']||'',placeholder:'e.g. paid by UPI, ref …'});
+  const dd=(now['console.billing.due']||'').slice(0,10),gu=(now['console.billing.grace_until']||'').slice(0,10)||(dd?addDays(dd,5):''),lp=(now['console.billing.last_paid']||'').slice(0,10),s0=P.status||'active';
+  const stage=s0==='readonly'||s0==='off'?3:s0==='grace'||(dd&&TODAY>dd)?2:dd&&TODAY===dd?1:0;
+  const steps=[['Paid',lp?fmtD(lp):'–'],['Due',dd?fmtD(dd):'not set'],['Grace',dd?'until '+fmtD(gu):'5 days'],['Read-only',gu?'from '+fmtD(addDays(gu,1)):'bot paused']];
+  const tl=h('div',{class:'tl',role:'list','aria-label':'Payment timeline'},steps.map(([l,x],i)=>h('div',{class:'st'+(i<stage?' done':'')+(i===stage?' now':'')+(i===3?' bad':''),role:'listitem','aria-current':i===stage?'step':null},h('i'),h('b',null,l),h('span',null,x))));
+  const asked=now['console.billing.remind_now']||'';
+  const remind=h('div',{class:'remind'},h('div',{class:'t'},h('b',null,'Send a payment reminder'),h('span',{class:'hint'},'The bot messages the owners on WhatsApp (between 9:00 and 21:00).'+(asked?' Last asked '+asked.slice(0,16).replace('T',' ')+' UTC.':''))),
+    h('button',{class:'btn primary',disabled:s0==='off'||null,onclick:()=>modal('Send a reminder to '+c.name+'?',h('p',null,'The owners get a WhatsApp message: “Subscription reminder – please pay to keep the dashboard and the WhatsApp bot running.” It goes within a minute, or at 9:00 if it’s night.'),
+      close=>[h('button',{class:'btn',onclick:close},'Cancel'),h('button',{class:'btn primary',onclick:async e=>{e.currentTarget.disabled=true;try{await setMany(c,[['console.billing.remind_now',new Date().toISOString()]]);close();toast('Reminder sent to the bot ✓');refresh(c)}catch(x){toast('Couldn’t send: '+x.message);e.currentTarget.disabled=false}}},'Send reminder')])},'Send reminder'));
+  const d=due.value,sched=d?[['Due · WhatsApp reminder',d],['Day 3 · reminder',addDays(d,2)],['Day 5 · last reminder',addDays(d,4)],['Read-only + bot paused (auto)',addDays(d,6)]]:[];
+  return h('div',null,h('h3',{style:{marginTop:'4px'}},'Where this client is'),tl,remind,h('h3',null,'Details'),h('p',{class:'hint'},'Razorpay subscriptions need the keys: until then, track payments here. Automatic mode turns the dashboard read-only and pauses the bot 5 days after the due date unless marked paid.'),
+    h('div',{class:'form'},h('label',{class:'f'},'Status',status),h('label',{class:'f'},'Next due',due),h('label',{class:'f'},'Amount ₹ a month',amt),h('label',{class:'f'},'Mode',auto),h('label',{class:'f'},'Notes',notes)),
+    sched.length?h('div',null,h('h3',null,'Reminders'),h('div',{class:'rows'},sched.map(([l,x])=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,l)),h('span',null,fmtD(x)))))):null,
+    h('div',{style:{display:'flex',gap:'8px',marginTop:'14px',flexWrap:'wrap'}},
+      h('button',{class:'btn primary',onclick:()=>review(c,st,[['console.billing.status',status.value],['console.billing.due',due.value],['console.billing.amount',amt.value],['console.billing.auto',auto.value],['console.billing.notes',notes.value],['console.billing.grace_until',due.value?addDays(due.value,5):'']])},'Review & save'),
+      h('button',{class:'btn',onclick:()=>markPaid(c,st,due.value)},'Mark paid (next due +1 month)')))}
+/* paid: due moves a month on; a downgrade waiting for this date starts; last month's upgrade top-up is cleared */
+function markPaid(c,st,d){const nd=d?addMonth(d):addMonth(TODAY);let nx=null;try{nx=JSON.parse(setting(st,'console.plan.next')||'null')}catch(e){}
+  const rows=[['console.billing.status','active'],['console.billing.last_paid',TODAY],['console.billing.due',nd],['console.billing.grace_until',addDays(nd,5)],['console.billing.extra','']];
+  if(nx&&nx.tier)rows.push(...planRows(nx.tier,nx.addons||[],SWL.compose(nx.tier,nx.addons||[])),['console.plan.next','']);
+  review(c,st,rows)}
+
+/* offboarding: 1 data to Excel, 2 files zipped in Drive, 3 wipe (typed confirmation) */
+async function xlsx(){if(window.XLSX)return window.XLSX;await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=ok;s.onerror=no;document.head.append(s)});return window.XLSX}
+function guestsOf(bk){const m=new Map();(bk||[]).forEach(b=>{const p=String(b.phone||'').replace(/\D/g,'');const k=p.length>=10?p.slice(-10):String(b.guest||'').toLowerCase();if(!k)return;
+  const g=m.get(k)||{Guest:b.guest||'',Phone:b.phone||'',Stays:0,'First check-in':b.check_in||'','Last check-in':b.check_in||''};g.Stays++;if(String(b.check_in)<g['First check-in'])g['First check-in']=b.check_in;if(String(b.check_in)>g['Last check-in'])g['Last check-in']=b.check_in;m.set(k,g)});
+  return[...m.values()].sort((a,b)=>String(b['Last check-in']).localeCompare(String(a['Last check-in'])))}
+function offboard(c,st){const out=h('div');
+  const s1=h('button',{class:'btn primary',onclick:async e=>{const b=e.currentTarget;b.disabled=true;b.textContent='Exporting…';try{const j=await api(c,'console_export'),X=await xlsx(),wb=X.utils.book_new();
+      Object.entries(j.tabs).forEach(([t,rows])=>{const ws=X.utils.json_to_sheet((rows||[]).map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[k,typeof v==='object'&&v!==null?JSON.stringify(v):v]))));X.utils.book_append_sheet(wb,ws,t.slice(0,31))});
+      X.utils.book_append_sheet(wb,X.utils.json_to_sheet(guestsOf(j.tabs.bookings)),'Guest list');
+      X.writeFile(wb,`${c.name} export ${TODAY}.xlsx`);out.append(h('p',{class:'okt'},`✓ Excel downloaded: ${Object.keys(j.tabs).length} tabs + guest list (${guestsOf(j.tabs.bookings).length} guests)`));b.textContent='Export again'}
+    catch(x){toast('Export failed: '+x.message);b.textContent='Export data to Excel'}finally{b.disabled=false}}},'Export data to Excel');
+  const s2=h('button',{class:'btn',onclick:async e=>{const b=e.currentTarget;b.disabled=true;b.textContent='Zipping in Drive…';try{const j=await api(c,'console_files');
+      out.append(h('div',null,h('p',{class:'okt'},`✓ ${j.zips.length} zip${j.zips.length===1?'':'s'} in Drive`),j.folder?h('a',{href:j.folder,target:'_blank',rel:'noopener'},'Open the export folder'):null,h('ul',null,j.zips.map(z=>h('li',null,z.url?h('a',{href:z.url,target:'_blank',rel:'noopener'},z.name):z.name,` · ${z.files} files`)))));b.textContent='Zip again'}
+    catch(x){toast('Zip failed: '+x.message);b.textContent='Zip photos, bills & reports'}finally{b.disabled=false}}},'Zip photos, bills & reports');
+  const typed=h('input',{placeholder:`WIPE ${st.client}`,autocomplete:'off'});
+  const s3=h('button',{class:'btn danger',onclick:()=>{if(typed.value.trim()!=='WIPE '+st.client)return toast(`Type WIPE ${st.client} exactly`);
+    modal('Wipe '+c.name+'?',h('div',null,h('p',null,'Every tab’s rows are cleared, sessions end, photos and reports go to Drive’s trash (30 days there) and sign-in switches off. This cannot be undone from the console.'),h('p',{class:'hint'},'Only possible within 24 hours of both exports.')),
+      close=>[h('button',{class:'btn',onclick:close},'Keep everything'),h('button',{class:'btn danger',onclick:async e=>{e.currentTarget.disabled=true;try{const j=await api(c,'console_wipe',{confirm:typed.value.trim()});close();toast('Wiped');out.append(h('p',{class:'okt'},'✓ Wiped: '+Object.entries(j.cleared).map(([k,n])=>`${k} ${n}`).join(', ')));refresh(c)}catch(x){close();toast(x.message)}}},'Wipe now')])}},'Wipe the client');
+  const ex=st.export||{};
+  return h('div',null,h('p',{class:'hint'},'When a client leaves: give them everything, then wipe. Only from here.'),
+    h('div',{class:'step'},h('span',{class:'n'},'1'),h('div',{class:'t'},h('b',null,'Data → Excel'),h('p',{class:'hint'},'Every tab as a sheet, plus a guest contact list.'+(ex.data_at?' Last export '+ex.data_at.slice(0,16).replace('T',' '):'')),s1)),
+    h('div',{class:'step'},h('span',{class:'n'},'2'),h('div',{class:'t'},h('b',null,'Files → zip in Drive'),h('p',{class:'hint'},'Manager-app photos, bills and the monthly report PDFs (≈40 MB a zip).'+(ex.files_at?' Last zip '+ex.files_at.slice(0,16).replace('T',' '):'')),s2)),
+    h('div',{class:'step'},h('span',{class:'n'},'3'),h('div',{class:'t'},h('b',null,'Wipe and switch off'),h('p',{class:'hint'},`Type WIPE ${st.client} to unlock.`),h('div',{class:'form'},typed),h('div',{style:{marginTop:'8px'}},s3))),out)}
+
+function links(c){const L=[[c.dashboard_url,'Dashboard'],[c.manager_url,'Manager app'],[c.bot_url,'Bot (health)'],[c.api_url,'Sheet API'],[c.repo&&'https://github.com/'+c.repo,'Client repo'],[c.site_repo&&'https://github.com/'+c.site_repo,'Dashboard site repo'],
+    ['https://dashboard.render.com/','Render (hosting)'],['https://business.facebook.com/','Meta Business'],['https://developers.facebook.com/apps/','Meta apps (WhatsApp)'],['https://console.anthropic.com/','Anthropic console'],
+    ['https://serpapi.com/dashboard','SerpApi'],['https://script.google.com/home','Apps Script'],['https://dashboard.razorpay.com/','Razorpay']].filter(x=>x[0]);
+  return h('div',null,h('h3',null,'Links'),h('div',{class:'links'},L.map(([u,l])=>h('a',{href:u,target:'_blank',rel:'noopener'},l,h('small',null,u)))))}
+
+/* home: every client at a glance - what they pay, who is due, AI spend, bookings trend */
+function home(){const cs=S.reg.clients,on=cs.filter(c=>sess(c));
+  on.forEach(c=>{if(!S.st[c.id]&&!S.busy[c.id])setTimeout(()=>refresh(c))});
+  const ok=on.map(c=>[c,S.st[c.id]]).filter(([,st])=>st&&!st.error);
+  const amt=st=>+setting(st,'console.billing.amount')||((SWL.TIERS.find(t=>t.k===st.plan.tier)||{}).price||0);
+  const stat=st=>st.plan.status||'active',due=st=>setting(st,'console.billing.due').slice(0,10);
+  const mrr=ok.filter(([,st])=>/^(active|grace)$/.test(stat(st))).reduce((a,[,st])=>a+amt(st),0);
+  const soon=ok.filter(([,st])=>due(st)&&due(st)<=addDays(TODAY,7)&&/^(active|grace)$/.test(stat(st))).length;
+  const grace=ok.filter(([,st])=>stat(st)==='grace').length,ro=ok.filter(([,st])=>/^(readonly|off)$/.test(stat(st))).length;
+  const ai=ok.reduce((a,[,st])=>a+(+st.month.ai_cost_inr||0),0),hr=new Date().getHours(),mg=ok.reduce((a,[,st])=>a+marginOf(st).margin,0);
+  const att=cs.flatMap(c=>alertsOf(c).map(a=>({...a,c}))).sort((a,b)=>({bad:0,warn:1,info:2})[a.lvl]-({bad:0,warn:1,info:2})[b.lvl]);
+  const kpi=(l,v)=>h('div',{class:'kpi tilt'},h('span',null,l),h('b',null,v));
+  const row=c=>{const st=S.st[c.id],P=st&&!st.error?st.plan:null,tier=P&&(SWL.TIERS.find(t=>t.k===P.tier)||(P.tier==='custom'?{name:'Custom'}:null)),tr=trendOf(st);
+    const m=(l,v,keep)=>h('div',{class:'m'+(keep?' keep':'')},h('span',null,l),h('b',null,v));
+    return h('button',{class:'hrow tilt',onclick:()=>open(c.id)},
+      h('div',{class:'who2'},avatar(c),h('div',null,h('b',null,c.name),h('div',{class:'chips'},!sess(c)?h('span',{class:'chip'},'not connected'):!st?h('span',{class:'sk',style:{width:'90px',height:'18px'}}):st.error?h('span',{class:'chip bad'},'sheet error'):[h('span',{class:'chip acc'},tier?tier.name:'No plan'),billChip(P)])),dot(c)),
+      P?m('Pays',[num('home:'+c.id+':amt',amt(st),'inr'),h('small',{class:'hint'},' /mo')]):m('Pays','–'),
+      P?m('Next due',due(st)?fmtD(due(st)):'–'):m('Next due','–'),
+      P?m('AI this month',num('home:'+c.id+':ai',st.month.ai_cost_inr,'r2')):m('AI this month','–'),
+      h('div',{class:'m keep'},tr?spark(tr.map(t=>t.bookings),c.name+' bookings by month: '+tr.map(t=>t.month+' '+t.bookings).join(', ')):h('span',{class:'hint',style:{fontSize:'11px'}},P?'trend after Code.gs v1.46':'')))};
+  return h('div',{class:'card'},h('div',{class:'hero'},h('div',null,h('h2',null,(hr<12?'Good morning':hr<17?'Good afternoon':'Good evening')+', '+String(S.me.name||'Luv').split(' ')[0]),
+      h('div',{class:'hint'},`${on.length} of ${cs.length} client${cs.length===1?'':'s'} connected · ${fmtD(TODAY)}`)),h('span',{class:'grow'}),
+      on.length?h('div',{class:'tools'},h('button',{class:'btn sm',onclick:announceTool},'Announcement'),h('button',{class:'btn sm',onclick:fleetSwitch},'Switch for all'),h('button',{class:'btn sm',title:'Send the current plans and prices (tiers.js) to every connected client’s Plan & billing page',onclick:e=>publishAll(e.currentTarget)},'Publish prices')):null),
+    att.length?h('div',null,h('h3',null,`Needs a look · ${att.length}`),h('div',{class:'rows inbox'},att.slice(0,12).map(a=>h('button',{class:'row al-row',onclick:()=>{open(a.c.id);S.tab=a.tab;draw()}},avatar(a.c),h('div',{class:'t'},h('b',null,a.c.name),h('small',null,a.text)),h('span',{class:'al-dot '+a.lvl}))))):null,
+    h('div',{class:'kpis'},kpi('Monthly revenue',num('home:mrr',mrr,'inr')),kpi('Payments due · 7 days',num('home:soon',soon)),kpi('In grace',num('home:grace',grace)),kpi('Read-only',num('home:ro',ro)),kpi('AI spend this month',num('home:ai',ai,'r2'))),
+    (q=>q.length?h('div',null,h('h3',null,`Requests · ${q.length}`),h('div',{class:'rows inbox'},q.map(([c,st,r])=>reqRow(c,st,r)))):null)(ok.flatMap(([c,st])=>pendingOf(st).map(r=>[c,st,r]))),
+    h('h3',null,'Clients'),h('div',{class:'hlist'},cs.map(row)),!cs.length?h('div',{class:'empty'},'No clients yet.'):null)}
+
+/* ⌘K: jump to a client, a tab or a change ("jabula billing", "switch off campaigns") */
+function cmds(){const L=[{l:'All clients',s:'Home',run:()=>open('home')},{l:'Add a client',s:'New',run:addClient},{l:'Announcement to dashboards',s:'Tool',run:announceTool},{l:'Switch for all clients',s:'Tool',run:fleetSwitch}];
+  const T=[['overview','Overview'],['health','Health'],['support','Help'],['plan','Plan'],['switches','Features & limits'],['models','AI models'],['billing','Billing'],['setup','Setup'],['offboard','Offboarding'],['links','Links']];
+  S.reg.clients.forEach(c=>{L.push({l:c.name,s:'Open',run:()=>open(c.id)});T.forEach(([k,t])=>L.push({l:`${c.name} › ${t}`,s:'Tab',run:()=>{open(c.id);S.tab=k;draw()}}));
+    const st=S.st[c.id];if(!st||st.error)return;const P=st.plan;
+    SWL.FEATURES.forEach(f=>{const v=String((P.features||{})[f.k]||''),on=f.offByDefault?/^(on|yes|true|1)$/i.test(v):!/^(off|no|false|0)$/i.test(v);
+      L.push({l:`${c.name} › switch ${on?'off':'on'} ${f.name}`,s:'Change',run:()=>{open(c.id);S.tab='switches';draw();review(c,st,[['console.feature.'+f.k,on?'off':'on']])}})});
+    L.push({l:`${c.name} › mark paid`,s:'Billing',run:()=>{open(c.id);S.tab='billing';draw();markPaid(c,st,setting(st,'console.billing.due').slice(0,10))}});
+    pendingOf(st).forEach(r=>{L.push({l:`${c.name} › approve request (${r.tier})`,s:'Request',run:()=>{open(c.id);approveReq(c,st,r)}})});
+    L.push({l:`${c.name} › back up now`,s:'Backup',run:async()=>{try{await api(c,'console_backup');toast('Backed up ✓');refresh(c)}catch(x){toast(x.message)}}});
+    L.push({l:`${c.name} › send payment reminder`,s:'Billing',run:()=>{open(c.id);S.tab='billing';draw();const b=[...document.querySelectorAll('.remind .btn')][0];b&&b.click()}})});
+  return L}
+function cmdk(){if($('.cmdk'))return;const all=cmds();let sel=0,hits=all;
+  const inp=h('input',{type:'text',placeholder:'Type a client, a tab or a change…','aria-label':'Search commands',autocomplete:'off',spellcheck:'false'}),ul=h('ul',{role:'listbox'});
+  const close=()=>{sc.remove();document.removeEventListener('keydown',key,true)};
+  const go=x=>{close();x.run()};
+  const paint=()=>{ul.replaceChildren(...(hits.length?hits.slice(0,9).map((x,i)=>h('li',{role:'option','aria-selected':i===sel?'true':'false',onmousemove:()=>{if(sel!==i){sel=i;paint()}},onclick:()=>go(x)},x.l,h('small',null,x.s))):[h('div',{class:'none'},'Nothing matches')]))};
+  const find=()=>{const q=inp.value.toLowerCase().trim().split(/\s+/).filter(Boolean);hits=!q.length?all.slice(0,9):all.filter(x=>{const t=(x.l+' '+x.s).toLowerCase();return q.every(w=>t.includes(w))})
+      .sort((a,b)=>(b.l.toLowerCase().startsWith(q[0]||'')-a.l.toLowerCase().startsWith(q[0]||''))||a.l.length-b.l.length);sel=0;paint()};
+  const key=e=>{if(e.key==='Escape'){e.preventDefault();close()}else if(e.key==='ArrowDown'){e.preventDefault();sel=Math.min(sel+1,Math.min(hits.length,9)-1);paint()}else if(e.key==='ArrowUp'){e.preventDefault();sel=Math.max(sel-1,0);paint()}else if(e.key==='Enter'&&hits[sel]){e.preventDefault();go(hits[sel])}};
+  inp.addEventListener('input',find);document.addEventListener('keydown',key,true);
+  const sc=h('div',{class:'cmdk',onclick:e=>{if(e.target===sc)close()}},h('div',{class:'box',role:'dialog','aria-modal':'true','aria-label':'Commands'},h('div',{class:'q'},icon('search'),inp),ul,
+    h('div',{class:'foot'},h('span',null,'↑↓ to move'),h('span',null,'↵ to open'),h('span',null,'esc to close'))));
+  document.body.append(sc);find();setTimeout(()=>inp.focus())}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'&&S.me){e.preventDefault();cmdk()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('.cmdk')){const m=[...document.querySelectorAll('.scrim')].pop();if(m)m.remove()}});
+
+function addClient(){const f={id:h('input',{placeholder:'e.g. hillnest'}),name:h('input',{placeholder:'Business name'}),api_url:h('input',{placeholder:'https://script.google.com/macros/s/…/exec'}),dashboard_url:h('input',{placeholder:'https://…'}),manager_url:h('input',{placeholder:'https://…/manager/'}),repo:h('input',{placeholder:'owner/wa-client'})},err=h('div',{class:'err'});
+  modal('Add a client',h('div',null,h('div',{class:'form'},Object.entries(f).map(([k,i])=>h('label',{class:'f'},k.replace('_',' '),i))),err,
+    h('p',{class:'hint'},'Saved on this device. To keep it for every device, use “Copy registry” and commit it as clients.json. Next: set the script property CONSOLE_KEY on the client’s Apps Script, then Connect.')),
+    close=>[h('button',{class:'btn',onclick:()=>{navigator.clipboard.writeText(JSON.stringify({google_client_id:S.reg.google_client_id,clients:S.reg.clients.filter(c=>!c.test)},null,2)).then(()=>toast('Registry copied ✓'))}},'Copy registry'),
+      h('button',{class:'btn',onclick:close},'Cancel'),h('button',{class:'btn primary',onclick:()=>{const v=Object.fromEntries(Object.entries(f).map(([k,i])=>[k,i.value.trim()]));
+        if(!/^[a-z0-9-]{2,30}$/.test(v.id))return err.textContent='Id: 2-30 lowercase letters, digits or dashes.';if(!/^https:\/\//.test(v.api_url))return err.textContent='The sheet API must be an https link.';if(client(v.id))return err.textContent='That id exists.';
+        ls.set('swl_clients_extra',[...ls.get('swl_clients_extra',[]),v]);close();loadReg().then(()=>{S.sel=v.id;draw()})}},'Add')])}
+function removeClient(c){modal('Remove '+c.name+' from the console?',h('p',null,'Only this console forgets it (and its key on this device). The client’s data and plan are not touched. To offboard them, use Offboarding first.'),
+  close=>[h('button',{class:'btn',onclick:close},'Keep'),h('button',{class:'btn danger',onclick:()=>{ls.set('swl_clients_removed',[...ls.get('swl_clients_removed',[]),c.id]);ls.set('swl_clients_extra',ls.get('swl_clients_extra',[]).filter(x=>x.id!==c.id));ls.del('swl_key_'+c.id);ls.del('swl_sess_'+c.id);close();loadReg().then(draw)}},'Remove')])}
+
+loadReg().then(()=>{draw();S.reg.clients.forEach(c=>{ping(c);versions(c)});setInterval(()=>S.reg.clients.forEach(ping),5*60e3);const c=client(S.sel);if(c&&S.me&&sess(c))refresh(c)});
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>scalewithluv demo</title>
+<meta name="description" content="Try the owner dashboard, the manager app and the control console of a WhatsApp AI business system, with made-up data.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6fb;--card:rgba(255,255,255,.78);--line:rgba(17,24,39,.09);--ink:#111827;--muted:#4b5563;--accent:#1d5bd8;--chip:#eef2fb;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1017;--card:rgba(24,28,38,.8);--line:rgba(255,255,255,.1);--ink:#f3f4f6;--muted:#a3abb9;--accent:#7aa2ff;--chip:#1b2233;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1017;--card:rgba(24,28,38,.8);--line:rgba(255,255,255,.1);--ink:#f3f4f6;--muted:#a3abb9;--accent:#7aa2ff;--chip:#1b2233;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(900px 500px at 10% -10%,rgba(29,91,216,.13),transparent 60%),radial-gradient(800px 500px at 100% 0%,rgba(15,138,106,.10),transparent 60%)}
+main{max-width:1080px;margin:0 auto;padding:56px 16px 72px}
+.eyebrow{display:inline-block;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--accent);background:var(--chip);padding:5px 12px;border-radius:999px}
+h1{font:400 clamp(36px,6vw,58px)/1.05 "DM Serif Display",Georgia,serif;margin:18px 0 14px;letter-spacing:-.01em}
+h1 em{font-style:italic;color:var(--accent)}
+.lead{max-width:640px;color:var(--muted);font-size:18px;margin:0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{display:flex;flex-direction:column;gap:12px;padding:24px;border-radius:22px;background:var(--card);border:1px solid var(--line);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 2px rgba(0,0,0,.04),0 12px 32px rgba(17,24,39,.06);text-decoration:none;color:inherit;
+  transition:transform .2s ease,box-shadow .2s ease}
+.card:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(0,0,0,.05),0 20px 44px rgba(17,24,39,.11)}
+.card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--chip);color:var(--accent)}
+.icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card h2{margin:4px 0 0;font-size:21px;font-weight:700;letter-spacing:-.01em}
+.who{font-size:13px;font-weight:600;color:var(--muted)}
+.card p{margin:0;color:var(--muted)}
+.card ul{margin:2px 0 0;padding-left:18px;color:var(--muted);font-size:15px}
+.card li{margin:3px 0}
+.go{margin-top:auto;padding-top:8px;font-weight:600;color:var(--accent)}
+.note{margin-top:34px;display:grid;gap:8px;max-width:760px;color:var(--muted);font-size:15px}
+.note b{color:var(--ink)}
+code{font:600 14px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--chip);padding:2px 6px;border-radius:6px;color:var(--ink)}
+footer{margin-top:48px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+  <span class="eyebrow">Live demo · made-up data</span>
+  <h1>One WhatsApp AI system, <em>three views</em></h1>
+  <p class="lead">A short-stay business, "Pinewood Stays", run from one Google Sheet: guests book through the WhatsApp bot, the owner runs the business from the dashboard, managers work from their phones, and the console runs every client.</p>
+
+  <div class="grid">
+    <a class="card" href="dashboard/">
+      <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg></span>
+      <span class="who">For the owner</span>
+      <h2>Owner dashboard</h2>
+      <p>Bookings, money, calendar, check-in desk, WhatsApp leads and AI insights.</p>
+      <ul><li>Add a booking and watch the calendar update</li><li>Open WhatsApp for the enquiry funnel</li><li>Try AI insights for pricing ideas</li></ul>
+      <span class="go">Open dashboard →</span>
+    </a>
+    <a class="card" href="dashboard/manager/">
+      <span class="icon"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></span>
+      <span class="who">For managers · best on a phone</span>
+      <h2>Manager app</h2>
+      <p>Today's check-ins and check-outs, cleaning checklists, guest requests, issues and expense claims.</p>
+      <ul><li>Mark a guest request done</li><li>Report an issue, then see it on the dashboard</li><li>Switch to Hindi</li></ul>
+      <span class="go">Open manager app →</span>
+    </a>
+    <a class="card" href="console/">
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2.5"/></svg></span>
+      <span class="who">For the operator</span>
+      <h2>Console</h2>
+      <p>Every client in one place: plan and features, health, billing, backups and offboarding.</p>
+      <ul><li>Switch a feature off for one client</li><li>Check sheet health and versions</li><li>Look at the billing tracker</li></ul>
+      <span class="go">Open console →</span>
+    </a>
+  </div>
+
+  <div class="note">
+    <div><b>All three are linked.</b> They share one demo sheet in your browser, so an issue reported in the manager app shows on the dashboard and in the console.</div>
+    <div><b>Nothing is real.</b> Guests, phones and money are invented, and changes stay in this browser. Tap <b>Reset</b> at the bottom of any page to start again.</div>
+    <div>Manager app login: <code>asha</code> / <code>pinewood123</code></div>
+  </div>
+  <footer>Built by scalewithluv · WhatsApp AI agents and dashboards for small businesses</footer>
+</main>
+</body>
+</html>

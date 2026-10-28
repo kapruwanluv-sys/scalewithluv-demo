@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head><script>window.SWL_DEMO={page:"manager"}</script><script src="../../demo-sheet.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#f6f8fc">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Manager">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="../icons/favicon-64.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Manager · Pinewood Stays</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* Manager app: the same travel-brand look as the dashboard, built for one hand on a phone - big tap targets, one task per screen, a bottom tab bar. */
+:root{--bg:#f6f8fc;--surface:#fff;--surface-2:#f2f5fb;--hair:#eef2f8;--hair-2:#dde4ef;--ink:#0c1a3d;--ink-2:#2f3d5e;--muted:#5a6681;--faint:#9aa4ba;
+  --accent:#1d5bd8;--accent-soft:#eaf1ff;--ok:#0f8a5f;--warn:#b86e00;--bad:#c2372f;--shadow:0 10px 30px rgba(12,26,61,.08);
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--serif:'DM Serif Display',Georgia,serif}
+*{box-sizing:border-box}html,body{margin:0}html{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent;color-scheme:light only;touch-action:pan-x pan-y}.sheet{overscroll-behavior:contain}body{background:var(--bg);color:var(--ink);font:14px/1.45 var(--sans);-webkit-font-smoothing:antialiased;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+[hidden]{display:none!important}button,input,select,textarea{font:inherit;color:inherit}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+  background:rgba(246,248,252,0.86);background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
+.top .who{flex:1;display:grid;min-width:0}.top .who b{font-family:var(--serif);font-weight:400;font-size:20px;line-height:1.1}.top .who small{color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ic{width:42px;height:42px;border-radius:50%;border:1px solid var(--hair-2);background:var(--surface);display:grid;place-items:center;position:relative;cursor:pointer}
+.ic svg{width:19px;height:19px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--bad);color:#fff;font-size:10.5px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 2px var(--bg)}
+main{display:grid;gap:14px;padding:14px max(16px,env(safe-area-inset-right,0px)) 18px max(16px,env(safe-area-inset-left,0px));max-width:720px;margin:0 auto}
+.card{background:var(--surface);border:1px solid var(--hair);border-radius:20px;padding:14px;box-shadow:var(--shadow);display:grid;gap:10px}
+.card h2{margin:0;font-size:15px;display:flex;align-items:center;gap:8px}.card h2 small{margin-left:auto;color:var(--muted);font-weight:500;font-size:12px}
+.hint{color:var(--muted);font-size:12.5px;margin:0}.empty{color:var(--muted);font-size:13px;padding:6px 0}
+.row{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--hair)}.row:first-of-type{border-top:0}
+.row .t{flex:1;display:grid;gap:2px;min-width:0}.row .t b{font-size:14px}.row .t span{color:var(--muted);font-size:12.5px}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap;background:var(--surface-2);color:var(--ink-2)}
+.p-ok{background:rgba(221,239,233,1.0);background:color-mix(in srgb,var(--ok) 14%,#fff);color:var(--ok)}.p-warn{background:rgba(244,233,217,1.0);background:color-mix(in srgb,var(--warn) 15%,#fff);color:var(--warn)}.p-bad{background:rgba(248,231,230,1.0);background:color-mix(in srgb,var(--bad) 12%,#fff);color:var(--bad)}.p-acc{background:var(--accent-soft);color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 16px;border-radius:14px;border:1px solid var(--hair-2);background:var(--surface);font-weight:650;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.sm{min-height:36px;padding:0 12px;font-size:13px;border-radius:12px}.btn.full{width:100%}.btn:disabled{opacity:.5}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:var(--surface-2);border-radius:14px;padding:10px;display:grid;gap:2px;text-align:center}
+.stat b{font-size:18px}.stat span{font-size:11px;color:var(--muted)}.stat .ok{color:var(--ok)}.stat .bad{color:var(--bad)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{display:inline-flex;gap:6px;align-items:center;padding:8px 12px;border-radius:99px;border:1px solid var(--hair-2);background:var(--surface);font-weight:600;font-size:13px;cursor:pointer}
+.chip b{color:var(--bad)}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,1fr);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));
+  background:rgba(255,255,255,0.92);background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--hair)}
+.tabs button{display:grid;justify-items:center;gap:2px;border:0;background:none;padding:6px 2px;font-size:10.5px;font-weight:650;color:var(--muted);cursor:pointer;position:relative}
+.tabs svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.tabs button[aria-current=page]{color:var(--accent)}
+.tabs .badge{top:0;right:calc(50% - 22px)}
+.form{display:grid;gap:12px}.form label{display:grid;gap:5px;font-size:12.5px;font-weight:650;color:var(--ink-2)}
+.form input,.form select,.form textarea{width:100%;min-height:44px;padding:10px 12px;border-radius:12px;border:1px solid var(--hair-2);background:var(--surface);font-size:15px}
+.ck{display:flex;gap:12px;align-items:center;padding:12px;border-radius:14px;border:1px solid var(--hair-2);background:var(--surface);cursor:pointer;font-size:14px;font-weight:500}
+.ck input{width:22px;height:22px;accent-color:var(--accent);flex:none}.ck.on{border-color:rgba(128,188,174,1.0);border-color:color-mix(in srgb,var(--ok) 45%,var(--hair-2));background:rgba(241,248,245,1.0);background:color-mix(in srgb,var(--ok) 6%,#fff)}
+.cnt{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--hair)}.cnt input{width:96px;text-align:center}
+.yn{display:inline-flex;border:1px solid var(--hair-2);border-radius:12px;overflow:hidden}.yn button{border:0;background:var(--surface);padding:9px 14px;font-weight:650;cursor:pointer}.yn button[aria-pressed=true]{background:var(--accent);color:#fff}
+.pics{display:flex;gap:8px;flex-wrap:wrap}.pics img{width:72px;height:72px;object-fit:cover;border-radius:12px;border:1px solid var(--hair-2)}
+.addpic{width:72px;height:72px;border-radius:12px;border:1.5px dashed var(--hair-2);display:grid;place-items:center;color:var(--muted);font-size:24px;cursor:pointer;background:var(--surface)}
+.err{color:var(--bad);font-size:13px;font-weight:600}
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(12,26,61,.35);display:flex;align-items:flex-end;justify-content:center}
+.sheet .in{width:100%;max-width:720px;max-height:92vh;overflow:auto;background:var(--bg);border-radius:22px 22px 0 0;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:grid;gap:12px}
+.sheet h3{margin:0;font-family:var(--serif);font-weight:400;font-size:22px;display:flex;align-items:center;justify-content:space-between}
+.sheet .x{border:0;background:var(--surface-2);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--ink);color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;font-weight:600;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.login .card{width:100%;max-width:380px;padding:24px;gap:14px}.login h1{margin:0;font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.1}.login h1 em{color:var(--accent)}
+.news-c{display:grid;gap:4px;padding:10px 12px;border:1px solid var(--hair-2);border-radius:16px;background:var(--surface)}.news-c b{display:flex;gap:8px;align-items:center}.news-c b span{margin-left:auto;font-size:12px;color:var(--muted)}
+.news-i{display:grid;gap:1px;padding:6px 0;border-top:1px solid var(--hair);font-size:12.5px}.news-i:first-of-type{border-top:0}.news-i small{color:var(--muted)}
+.loading{display:grid;place-items:center;gap:10px;padding:40px 0;color:var(--muted)}.spin{width:28px;height:28px;border-radius:50%;border:3px solid var(--hair-2);border-top-color:var(--accent);animation:sp 0.9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+/* round 2: urgent card, outbox, ratings, check-in info, language */
+.card.urgent{border-color:rgba(218,158,158,1.0);border-color:color-mix(in srgb,var(--bad) 45%,var(--hair));background:rgba(253,247,247,1.0);background:color-mix(in srgb,var(--bad) 4%,#fff)}.card.urgent h2 svg{width:18px;height:18px;fill:none;stroke:var(--bad);stroke-width:2}
+.badge.warn{background:var(--warn)}
+/* checklist / stock: one card per item */
+.prog{display:grid;gap:5px}.prog-b{height:8px;border-radius:99px;background:var(--hair-2);overflow:hidden}.prog-b i{display:block;height:100%;width:0;border-radius:99px;background:var(--ok);transition:width .25s}
+.prog small{color:var(--muted);font-size:12px;font-weight:600}
+.ci-list{display:grid;gap:8px}
+.ci{display:grid;gap:8px;padding:10px 12px;border-radius:16px;border:1px solid var(--hair-2);background:var(--surface);transition:border-color .2s,background .2s}
+.ci.on{border-color:rgba(128,188,174,1.0);border-color:color-mix(in srgb,var(--ok) 45%,var(--hair-2));background:rgba(241,248,245,1.0);background:color-mix(in srgb,var(--ok) 6%,#fff)}
+.ci.bad{border-color:rgba(201,163,108,1.0);border-color:color-mix(in srgb,var(--warn) 55%,var(--hair-2));background:rgba(250,245,237,1.0);background:color-mix(in srgb,var(--warn) 7%,#fff)}
+.ci.need{box-shadow:inset 3px 0 0 var(--warn)}
+.ci-top{display:flex;align-items:center;gap:12px}.ci-t{flex:1;min-width:0;display:grid;gap:1px}.ci-t b{font-size:14.5px;font-weight:600;line-height:1.3}
+.ci-t small{color:var(--muted);font-size:11.5px}.ci-t .ci-req{color:var(--warn);font-weight:650}
+.ci.count .ci-top,.ci.yesno .ci-top{flex-wrap:wrap}.ci.count .ci-t,.ci.yesno .ci-t{order:-1;flex-basis:calc(100% - 100px)}
+.ci-acts{display:flex;gap:6px;flex:none}
+.ci-b{position:relative;width:40px;height:40px;border-radius:12px;border:1px solid var(--hair-2);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--muted)}
+.ci-b svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.ci-b.has{color:var(--accent);border-color:var(--accent)}.ci-b b{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:#fff;font-size:11px;display:grid;place-items:center;padding:0 4px}
+.ci.need .ci-b:first-of-type+.ci-b{border-color:var(--warn);color:var(--warn)}
+.tk{width:44px;height:44px;flex:none;border-radius:50%;border:2px solid var(--hair-2);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:transparent;transition:all .15s}
+.tk svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.tk[aria-pressed=true]{background:var(--ok);border-color:var(--ok);color:#fff}
+.stp{display:inline-flex;align-items:center;border:1px solid var(--hair-2);border-radius:14px;overflow:hidden;background:var(--surface)}
+.stp button{width:44px;height:44px;border:0;background:var(--surface-2);font-size:22px;font-weight:600;cursor:pointer;color:var(--ink)}
+.stp input{width:58px;height:44px;border:0;text-align:center;font-size:17px;font-weight:650;padding:0;-moz-appearance:textfield;background:transparent}
+.stp input::-webkit-inner-spin-button{-webkit-appearance:none}
+.ci .yn button{min-height:44px;min-width:58px}
+.ci-note{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--hair-2);font:inherit;font-size:14px}
+.ci-pics{display:flex;gap:6px;flex-wrap:wrap}.ci-pics:empty{display:none}
+.ci-th{position:relative}.ci-th img{width:60px;height:60px;object-fit:cover;border-radius:10px;border:1px solid var(--hair-2);display:block}
+.ci-th button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:13px;line-height:1;cursor:pointer}
+h4.sub{margin:6px 0 0;font-size:14px}.card.tasks{border-color:rgba(165,189,237,1.0);border-color:color-mix(in srgb,var(--accent) 35%,var(--hair))}.card.tasks .t span{white-space:normal;overflow:visible}.card.tasks h2 svg{width:18px;height:18px;fill:none;stroke:var(--accent);stroke-width:2}.row .acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.info{margin:0 0 6px;padding:8px 12px;border-radius:12px;background:var(--surface-2);font-size:12.5px}.info summary{cursor:pointer;font-weight:650;color:var(--accent)}.info p{margin:6px 0 0}
+.stars{display:flex;gap:6px}.stars button{border:0;background:none;font-size:36px;line-height:1;color:var(--hair-2);cursor:pointer;padding:2px}.stars button[aria-pressed=true]{color:#f5a623}
+.stats.two{grid-template-columns:repeat(2,1fr)}.cnt span small{display:block;color:var(--muted);font-size:11.5px;font-weight:500}.cnt .lowm{color:var(--warn);font-weight:650}
+.lang{display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}button.pill{border:0;cursor:pointer}
+
+/* photo viewer */
+html.iv-open,html.iv-open body{overflow:hidden}
+.iv{position:fixed;inset:0;z-index:200;background:rgba(6,8,14,.96);display:flex;flex-direction:column;touch-action:none;color:#fff;animation:ivIn .18s ease-out}
+@keyframes ivIn{from{opacity:0}to{opacity:1}}
+.iv-top{display:flex;align-items:center;gap:10px;padding:max(10px,env(safe-area-inset-top,0px)) 12px 10px;font-size:13px}
+.iv-n{font-variant-numeric:tabular-nums;opacity:.8;min-width:42px}.iv-cap{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.9}
+.iv-acts{display:flex;gap:6px}.iv-b{border:0;border-radius:99px;background:rgba(255,255,255,.14);color:#fff;font:inherit;font-size:13px;font-weight:600;padding:8px 12px;cursor:pointer;min-height:36px}
+.iv-stage{flex:1;min-height:0;display:grid;place-items:center;overflow:hidden;padding:0 0 max(10px,env(safe-area-inset-bottom,0px))}
+.iv-img{max-width:100%;max-height:100%;object-fit:contain;transform-origin:center;transition:transform .08s linear;user-select:none;-webkit-user-drag:none}
+.iv-prev,.iv-next{position:absolute;top:50%;margin-top:-22px;width:44px;height:44px;border-radius:50%;font-size:26px;line-height:1;padding:0}
+.iv-prev{left:10px}.iv-next{right:10px}.iv-prev[hidden],.iv-next[hidden]{display:none}
+@media (pointer:coarse){.iv-prev,.iv-next{display:none}}
+.cv-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.02em;background:#fff3d6;color:#8a5a00;vertical-align:1px}
+.cv-note{display:flex;flex-direction:column;gap:2px;border-left:4px solid #e0a020}.cv-note.on{border-left-color:#1d5bd8}.cv-note span{font-size:13px;color:#5a6681}
+.lv-list{margin-top:14px}
+input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{font-size:16px!important}   /* 16 px everywhere: iPhone never zooms into a field */
+@supports not (color:color-mix(in srgb,red,blue)){.p-ok{background:#e3f5eb}.p-warn{background:#fff1de}.p-bad{background:#fdecea}}   /* iOS < 16.2 */
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const CLIENT={"brand":"Pinewood Stays","api_url":"https://script.google.com/macros/s/DEMO1/exec","app":{"app_name":"Pinewood Stays","short_name":"Pinewood","description":"Bookings, money, check-in desk and WhatsApp leads in one place.","background":"#f6f8fc","theme":"#f6f8fc","icon_color":"#1d5bd8"}};
+/* Shared by the dashboard and the manager app (build.py puts it in both): what is due, done or missed for checkout
+   checklists, stock checks and guest reviews; manager scorecards; and "what's new since you last looked" from outside
+   sources (the WhatsApp bot, manager apps). Pure functions over the register rows - no screen code here. */
+const OPS=(()=>{
+  const iso=d=>d.toISOString().slice(0,10);
+  const addD=(s,n)=>{const d=new Date(String(s).slice(0,10)+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return iso(d)};
+  const dayDiff=(a,b)=>Math.round((new Date(String(b).slice(0,10)+'T12:00:00Z')-new Date(String(a).slice(0,10)+'T12:00:00Z'))/864e5);
+  const list=v=>Array.isArray(v)?v:typeof v==='string'&&v.trim().startsWith('[')?(()=>{try{return JSON.parse(v)}catch(e){return[]}})():String(v||'').split(',').map(x=>x.trim()).filter(Boolean);
+  const js=v=>{if(v&&typeof v==='object')return v;try{return v?JSON.parse(v):null}catch(e){return null}};
+  const DEF_CHECK=['Linen changed and beds made','Bathrooms cleaned','Kitchen and dishes clean','Floors swept and mopped','Bins emptied',
+    'Fresh towels out','Toiletries refilled','AC, fans and lights off','Doors and windows locked','Damage or missing items checked'];
+  const DEF_STOCK=[{name:'Bedsheets'},{name:'Pillow covers'},{name:'Towels'},{name:'Toiletry kits'},{name:'Toilet rolls'},
+    {name:'TV working',type:'ok'},{name:'Wi-Fi working',type:'ok'},{name:'Geyser working',type:'ok'},{name:'First-aid kit',type:'ok'}];
+  /* suggestions shown unticked in Manager app setup (the admin ticks what applies, or adds their own) */
+  const PRESET_CHECK=[...DEF_CHECK,'Fridge emptied and wiped','Geyser and heaters off','Gas knob closed','Keys and remotes in place','Bin liners replaced',
+    'Mirrors and glass wiped','Balcony swept','Water bottles refilled','Mattress and pillows checked for stains'];
+  const PRESET_STOCK=[...DEF_STOCK,{name:'Hand wash'},{name:'Dishwash liquid'},{name:'Garbage bags'},{name:'Drinking water bottles'},{name:'Tea and coffee kits'},
+    {name:'Spare gas cylinder full',type:'ok'},{name:'Inverter working',type:'ok'},{name:'AC remote working',type:'ok'},{name:'Iron working',type:'ok'},{name:'Hair dryer working',type:'ok'}];
+  const DEF_REQ=['Extra towels','Extra blankets','Room cleaning','Drinking water','Toiletries refill','Gas cylinder','Extra mattress'];
+  const PRESET_REQ=[...DEF_REQ,'Extra pillows','Iron','Hair dryer','Room heater','Kettle','Hot water bottle','Firewood'];
+  /* an item: {name, type, expect|min, photo, off}. Checklist type tick|count (expect = the number there should be);
+     stock type count|ok (min = buy more below it). Old lists of plain text still work. */
+  const normCheck=x=>typeof x==='string'?{name:x.trim(),type:'tick'}:{...x,name:String((x&&x.name)||'').trim(),type:x&&x.type==='count'?'count':'tick'};
+  const normStock=x=>typeof x==='string'?parseItem(x):{...x,name:String((x&&x.name)||'').trim()};
+  const normReq=x=>typeof x==='string'?{name:x.trim()}:{...x,name:String((x&&x.name)||'').trim()};
+  const active=(arr,norm)=>{const out=[];arr.map(norm).forEach(it=>{if(it.name&&!it.off&&!out.some(o=>o.name===it.name))out.push(it)});return out};
+  /* is a checklist item done: ticked, or counted (and at least the expected number when one is set) */
+  const checkDone=(it,v)=>it.type==='count'?v!=null&&v!==''&&!isNaN(+v)&&(!it.expect||+v>=it.expect):v===true;
+  /* settings: Settings rows ops.* / reviews.* over the client's defaults */
+  function cfg(rows,client){const m={};(rows||[]).forEach(r=>{m[String(r.key)]=r.value});client=client||{};
+    const num=(k,d)=>{const v=+m[k];return isFinite(v)&&m[k]!==''&&m[k]!=null?v:d};
+    const items=k=>{const v=js(m[k]);return Array.isArray(v)&&v.length?v:null};
+    const si=js(m['ops.stay_items']);
+    return{start:String(m['ops.start_date']||client.ops_start||'2026-10-27').slice(0,10),grace:num('ops.checklist_grace_days',1),
+      every:num('ops.stock_every_days',14),checkItems:items('ops.checkout_items')||DEF_CHECK,stockItems:items('ops.stock_items')||DEF_STOCK,
+      stayItems:si&&typeof si==='object'&&!Array.isArray(si)?si:{},photoSlots:items('ops.photo_slots')||[],
+      reqItems:items('ops.guest_requests')||DEF_REQ,reqOpenMax:num('ops.guest_request_open_max',3),
+      checkinTime:String(m['ops.checkin_time']||client.check_in_time||'13:00'),twoAdmin:num('ops.claim_two_admin_above',5000),
+      cities:(()=>{const v=js(m['ops.cities']);return Array.isArray(v)?v.filter(x=>x&&x.name):[]})(),
+      channels:list(m['reviews.channels']||'Airbnb'),window:num('reviews.window_days',14),lowAt:num('reviews.low_at',3)}}
+  /* the common list plus what this stay (or the whole place it belongs to) adds */
+  const parentOf=(pid,props)=>((props||[]).find(p=>list(p.includes).includes(pid))||{}).property_id||null;
+  const extra=(c,pid,props,k)=>[...((c.stayItems[parentOf(pid,props)]||{})[k]||[]),...((c.stayItems[pid]||{})[k]||[])];
+  function checkItemsFor(c,pid,props){return active([...c.checkItems,...extra(c,pid,props,'check')],normCheck)}
+  function stockItemsFor(c,pid,props){return active([...c.stockItems,...extra(c,pid,props,'stock')],normStock)}
+  /* "Bedsheets (min 12)" / "TV working (ok)" -> {name, min} / {name, type:'ok'} */
+  function parseItem(x){x=String(x).trim();if(/\(ok\)$/i.test(x))return{name:x.replace(/\s*\(ok\)$/i,''),type:'ok'};const m=/^(.*?)\s*\(min\s*(\d+)\)$/i.exec(x);return m?{name:m[1],min:+m[2]}:{name:x}}
+  const itemText=it=>it.name+(it.type==='ok'?' (ok)':it.min?` (min ${it.min})`:'');
+  /* two stays share nights when they are the same place, or one is the whole place over the other */
+  const overlap=(a,b,props)=>a===b||parentOf(a,props)===b||parentOf(b,props)===a; /* two flats of one place are separate */
+  const live=b=>b&&!b.deleted_at&&String(b.booking_status||'Confirmed')!=='Cancelled'&&b.check_in&&b.check_out;
+  /* a manager's stays: their list plus the whole place over their flats and the flats of a whole place they manage */
+  function scope(ids,props){ids=list(ids);const set=new Set(ids);(props||[]).forEach(p=>{const inc=list(p.includes);
+    if(inc.some(k=>set.has(k)))set.add(p.property_id);if(ids.includes(p.property_id))inc.forEach(k=>set.add(k))});return set}
+  /* checkout checklists: one per stay that ended since the start date */
+  /* a same-day turnover (the next guest checks in the day this one leaves) must be ready by check-in time: urgent */
+  function checklists(bookings,rows,today,c,inScope,props){const byB={};(rows||[]).forEach(r=>{if(r.booking_id)byB[String(r.booking_id)]=r});
+    const L=(bookings||[]).filter(live);
+    return L.filter(b=>String(b.check_out).slice(0,10)>=c.start&&String(b.check_out).slice(0,10)<=today&&(!inScope||inScope(b.property_id)))
+      .map(b=>{const co=String(b.check_out).slice(0,10),r=byB[String(b.booking_id)],due=addD(co,c.grace);
+        const next=L.find(x=>x!==b&&String(x.check_in).slice(0,10)===co&&overlap(x.property_id,b.property_id,props));
+        return{booking:b,property_id:b.property_id,check_out:co,due,row:r||null,status:r?'done':today>due?'missed':'due',missedAt:r?null:due,
+          sameDay:!!next,next:next||null,urgent:!!next&&!r&&co===today,dueTime:next?String(next.arrival_time||c.checkinTime||'13:00').slice(0,5):null}})
+      .sort((a,b)=>(b.urgent-a.urgent)||b.check_out.localeCompare(a.check_out))}
+  /* stock checks: every N days per real place (a whole place is its flats) */
+  function stock(props,rows,today,c,inScope){const out=[];
+    (props||[]).filter(p=>!list(p.includes).length&&!/^(stopped|inactive)$/i.test(String(p.status||''))&&(!inScope||inScope(p.property_id))).forEach(p=>{
+      const mine=(rows||[]).filter(r=>r.property_id===p.property_id).map(r=>({...r,day:String(r.done_at||r.submitted_at||'').slice(0,10)})).filter(r=>r.day);
+      let a=c.start,done=0,missed=0,missedAt=[],cur=null;
+      for(let i=0;i<200&&a<=today;i++){const z=addD(a,c.every),hit=mine.find(r=>r.day>=a&&r.day<z);
+        if(z>today){cur={from:a,until:addD(z,-1),status:hit?'done':'due',row:hit||null};break}
+        if(hit)done++;else{missed++;missedAt.push(z)}a=z}
+      const last=mine.sort((x,y)=>y.day.localeCompare(x.day))[0]||null;
+      out.push({property_id:p.property_id,current:cur,done,missed,missedAt,last})});return out}
+  /* the last n counts for a place, newest first: [{day, counts, by}] */
+  function stockTrend(rows,pid,n){return(rows||[]).filter(r=>r.property_id===pid).map(r=>({day:String(r.done_at||r.submitted_at||'').slice(0,10),counts:js(r.counts)||{},by:r.by_name||r.by||''}))
+    .filter(r=>r.day).sort((a,b)=>b.day.localeCompare(a.day)).slice(0,n||4)}
+  /* below the minimum at the latest count, per place: what to buy */
+  function shopping(props,rows,c){const out=[];(props||[]).filter(p=>!list(p.includes).length&&!/^(stopped|inactive)$/i.test(String(p.status||''))).forEach(p=>{
+    const last=stockTrend(rows,p.property_id,1)[0];if(!last)return;stockItemsFor(c,p.property_id,props).filter(it=>it.min&&it.type!=='ok').forEach(it=>{const have=+last.counts[it.name];
+      if(isFinite(have)&&have<it.min)out.push({property_id:p.property_id,city:p.city||'',item:it.name,have,min:it.min,need:it.min-have,day:last.day})})});return out}
+  /* guest reviews: platform stays (Airbnb by default) have a window after check-out to be reviewed */
+  function reviews(bookings,rows,today,c,inScope){const byB={};(rows||[]).forEach(r=>{if(r.booking_id)byB[String(r.booking_id)]=r});
+    return(bookings||[]).filter(b=>live(b)&&c.channels.includes(String(b.channel))&&String(b.check_out).slice(0,10)>=c.start&&String(b.check_out).slice(0,10)<=today&&(!inScope||inScope(b.property_id)))
+      .map(b=>{const co=String(b.check_out).slice(0,10),r=byB[String(b.booking_id)]||null,end=addD(co,c.window),left=dayDiff(today,end),st=String(r&&r.status||'');
+        const status=st==='received'?'received':st==='missed'||(left<0&&st!=='received')?'missed':st==='asked'?'asked':'open';
+        return{booking:b,property_id:b.property_id,check_out:co,ends:end,left,row:r,status,missedAt:status==='missed'?(r&&r.decided_at)||end:null}})
+      .sort((a,b)=>a.ends.localeCompare(b.ends))}
+  /* who a manager is in the rows the server writes: their email, else login:<id> */
+  const idOf=u=>String(u.email||(u.login?'login:'+u.login:'')).toLowerCase();
+  /* per manager: work done is credited to whoever did it (even at a stay they no longer have); missed and due follow
+     the stays they have now. Rows from before credit was recorded fall back to the name. */
+  function scorecards(staff,data,today,c){return(staff||[]).filter(u=>String(u.role||'').toLowerCase()==='manager').map(u=>{
+    const set=scope(u.properties,data.props),inS=pid=>set.has(pid),me=idOf(u),nm=String(u.name||'').trim().toLowerCase();
+    const mine=(r,idk,nk)=>{const id=String(r[idk]||'').toLowerCase();return id?id===me:!!nm&&String(r[nk]||'').trim().toLowerCase()===nm};
+    const cl=checklists(data.bookings,data.checklists,today,c,inS,data.props),rv=reviews(data.bookings,data.reviews,today,c,inS),sk=stock(data.props,data.stock,today,c,inS);
+    const cnt=(a,s)=>a.filter(x=>x.status===s).length,start=r=>String(r.done_at||r.submitted_at||r.asked_at||'').slice(0,10)>=c.start;
+    const got=(data.reviews||[]).filter(r=>r.status==='received'&&mine(r,'asked_by_id','asked_by')),rated=got.filter(r=>+r.rating>0);
+    return{user:u,stays:[...set],reviews:{received:got.length,missed:cnt(rv,'missed'),asked:cnt(rv,'asked'),open:cnt(rv,'open'),
+        avg:rated.length?Math.round(rated.reduce((t,r)=>t+ +r.rating,0)/rated.length*10)/10:null,low:got.filter(r=>r.low==='Yes').length},
+      checklists:{done:(data.checklists||[]).filter(r=>start(r)&&mine(r,'by','by_name')).length,missed:cnt(cl,'missed'),due:cnt(cl,'due')},
+      stock:{done:(data.stock||[]).filter(r=>start(r)&&mine(r,'by','by_name')).length,missed:sk.reduce((t,x)=>t+x.missed,0),due:sk.filter(x=>x.current&&x.current.status==='due').length}}})}
+  /* when a row arrived: its own timestamp, or the time inside a bot id like EX18c2f... */
+  const stamp=r=>{const t=r.submitted_at||r.created_at||r.done_at||r.asked_at||r.decided_at||r.confirmed_at||r.approved_at||null;if(t)return String(t);
+    if(r.reported_at&&+r.reported_at>1e9)return new Date(+r.reported_at*1000).toISOString();
+    const m=/^EX([0-9a-f]{10,12})$/i.exec(String(r.expense_id||''));if(m){const ms=parseInt(m[1],16);if(ms>1.5e12&&ms<2.5e12)return new Date(ms).toISOString()}
+    return r.reported_on?String(r.reported_on)+'T12:00':null};
+  const after=(t,since)=>t&&String(t).replace(' ','T')>since;
+  /* what is new from outside the app since `since` (ISO). role: 'admin' | 'manager'. ctx: {me, inScope, props} */
+  function news(d,since,role,ctx){ctx=ctx||{};const cats=[],add=(key,label,items,note)=>{if(items.length)cats.push({key,label,items:items.sort((a,b)=>String(b.at).localeCompare(String(a.at))),note})};
+    const nm=pid=>{const p=(d.props||[]).find(x=>x.property_id===pid);return p?String(p.property).replace(/\s*\(.*?\)/g,'').split(',')[0].trim():pid||''};
+    const inS=ctx.inScope||(()=>true),gName=id=>((d.bookings||[]).find(b=>String(b.booking_id)===String(id))||{}).guest||id;
+    if(role==='admin'){
+      add('wa_bookings','New bookings on WhatsApp',(d.bookings||[]).filter(b=>/whatsapp/i.test(b.source||'')&&after(stamp(b),since)).map(b=>({at:stamp(b),title:`${b.guest||'Guest'} · ${nm(b.property_id)}`,sub:`${String(b.check_in).slice(0,10)} → ${String(b.check_out).slice(0,10)}`,ref:{kind:'booking',id:b.booking_id}})));
+      add('wa_cancel','Cancelled on WhatsApp · confirm what was kept',(d.bookings||[]).filter(b=>b.refund_check==='Pending'&&!b.deleted_at).map(b=>({at:stamp(b)||'',title:`${b.guest||'Guest'} · ${nm(b.property_id)}`,sub:b.booking_id,ref:{kind:'booking',id:b.booking_id}})),'stays here until confirmed');
+      add('issues','Guest issues on WhatsApp',(d.maint||[]).filter(m=>/whatsapp/i.test(m.source||'')&&after(stamp(m),since)).map(m=>({at:stamp(m),title:m.issue,sub:`${nm(m.property_id)} · ${m.ticket_id} · ${m.priority||''}`,ref:{kind:'issue',id:m.ticket_id}})));
+      add('requests','Guest requests and flags',(d.requests||[]).filter(r=>after(stamp(r),since)).map(r=>({at:stamp(r),title:r.item||r.title||'Request',sub:[r.name,r.notes].filter(Boolean).join(' · ').slice(0,90),ref:{kind:'whatsapp'}})));
+      add('leads','New enquiries',(d.leads||[]).filter(l=>after(l.created_at,since)).map(l=>({at:l.created_at,title:l.name||'Enquiry',sub:[l.city,l.check_in&&String(l.check_in).slice(0,10)].filter(Boolean).join(' · '),ref:{kind:'whatsapp'}})));
+      add('bills','Bills sent on WhatsApp',(d.expenses||[]).filter(e=>/whatsapp/i.test(e.source||'')&&after(stamp(e),since)).map(e=>({at:stamp(e),title:`${e.category} · ₹${(+e.amount||0).toLocaleString('en-IN')}`,sub:nm(e.property_id),ref:{kind:'expense'}})));
+      add('mgr_issues','Issues reported by managers · approve',(d.maint||[]).filter(m=>m.status==='Pending approval').map(m=>({at:stamp(m)||'',title:m.issue,sub:`${nm(m.property_id)} · by ${m.reported_by||'manager'}`,ref:{kind:'issue',id:m.ticket_id}})),'stays here until approved or rejected');
+      add('claims','Expense claims · approve',(d.claims||[]).filter(c=>String(c.status||'pending')==='pending').map(c=>({at:stamp(c)||'',title:`${c.category||'Expense'} · ₹${(+c.amount||0).toLocaleString('en-IN')}`,sub:`${nm(c.property_id)} · by ${c.by_name||c.by||'manager'}`,ref:{kind:'claim',id:c.claim_id}})),'stays here until decided');
+      add('checklists','Checklists done',(d.checklists||[]).filter(r=>after(stamp(r),since)).map(r=>({at:stamp(r),title:nm(r.property_id),sub:`checkout ${r.booking_id||''}${list(js(r.photos)||r.photos).length?' · photos':''}`,ref:{kind:'ops'}})));
+      add('stock','Stock checks done',(d.stock||[]).filter(r=>after(stamp(r),since)).map(r=>({at:stamp(r),title:nm(r.property_id),sub:r.issues?String(r.issues).slice(0,80):'all counted',ref:{kind:'ops'}})));
+      add('low','Low ratings',(d.reviews||[]).filter(r=>r.low==='Yes'&&after(r.low_at||r.rated_at,since)).map(r=>({at:r.low_at||r.rated_at,title:`${'★'.repeat(+r.rating||0)} · ${gName(r.booking_id)} · ${nm(r.property_id)}`,sub:[r.review_text&&String(r.review_text).slice(0,80),'rated by '+(r.rated_by||'manager')].filter(Boolean).join(' · '),ref:{kind:'reviews',id:r.booking_id}})));
+      add('reviews_asked','Reviews asked for',(d.reviews||[]).filter(r=>r.status==='asked'&&after(r.asked_at,since)).map(r=>({at:r.asked_at,title:`${r.booking_id} · ${nm(r.property_id)}`,sub:`asked by ${r.asked_by||'manager'} · confirm when it arrives`,ref:{kind:'reviews'}})));
+      if(ctx.missed)add('missed','Missed',ctx.missed.filter(x=>after(x.at,since)),'checklists, stock checks or reviews not done in time');
+      (ctx.extra||[]).forEach(x=>add(x.key,x.label,x.items.filter(i=>x.always||after(i.at,since)),x.note))}
+    else{
+      add('bookings','New bookings at your stays',(d.bookings||[]).filter(b=>inS(b.property_id)&&after(stamp(b),since)).map(b=>({at:stamp(b),title:`${b.guest||'Guest'} · ${nm(b.property_id)}`,sub:`${String(b.check_in).slice(0,10)} → ${String(b.check_out).slice(0,10)} · ${b.guests||''} guests`,ref:{kind:'today'}})));
+      add('alerts','Guest alerts',(d.maint||[]).filter(m=>inS(m.property_id)&&/whatsapp/i.test(m.source||'')&&after(stamp(m),since)).map(m=>({at:stamp(m),title:m.issue,sub:`${nm(m.property_id)} · ${m.priority||''}`,ref:{kind:'issues'}})));
+      add('decisions','Decisions on your claims',(d.claims||[]).filter(c=>c.status&&c.status!=='pending'&&after(c.decided_at,since)).map(c=>({at:c.decided_at,title:`${c.category||'Expense'} · ₹${(+c.amount||0).toLocaleString('en-IN')}`,sub:c.status==='rejected'?'not approved'+(c.decision_note?' · '+c.decision_note:''):'approved',ref:{kind:'claims'}})));
+      add('approved','Your issues',(d.maint||[]).filter(m=>/manager/i.test(m.source||'')&&after(m.decided_at,since)).map(m=>({at:m.decided_at,title:m.issue,sub:m.status==='Rejected'?'not taken up':'approved · now '+(m.status||'open'),ref:{kind:'issues'}})));
+      add('confirmed','Reviews confirmed · add the stars',(d.reviews||[]).filter(r=>r.status==='received'&&after(r.confirmed_at,since)).map(r=>({at:r.confirmed_at,title:`${gName(r.booking_id)} · ${nm(r.property_id)}`,sub:r.rating?'★ '+r.rating+' noted':'counted for you · add the rating it got',ref:{kind:'reviews'}})))}
+    return cats}
+  /* arrival steps for a city (a local registration, say), from Manage › Properties › Cities */
+  const cityStepsOf=(c,city)=>((c.cities||[]).find(x=>x.name===city)||{}).steps||[];
+  return{cityStepsOf,cfg,scope,checklists,stock,reviews,scorecards,news,stamp,list,js,addD,dayDiff,DEF_CHECK,DEF_STOCK,DEF_REQ,PRESET_CHECK,PRESET_STOCK,PRESET_REQ,normCheck,normStock,normReq,checkDone,checkItemsFor,stockItemsFor,parseItem,itemText,stockTrend,shopping,parentOf,idOf}})();
+
+/* ============ basics ============ */
+const $=s=>document.querySelector(s);
+/* null-safe inserts: a helper that has nothing to show returns null; the DOM would print it as text (B-110) */
+for(const P_ of [Element.prototype,DocumentFragment.prototype])for(const m_ of ['append','prepend','replaceChildren','before','after']){const f_=P_[m_];if(f_)P_[m_]=function(...a){return f_.apply(this,a.filter(x=>x!=null&&x!==false))}}
+/* app-like: the page never zooms (pinch, double tap, field focus); only the photo viewer zooms, by itself */
+['gesturestart','gesturechange'].forEach(t=>document.addEventListener(t,e=>{if(!(e.target.closest&&e.target.closest('.iv')))e.preventDefault()},{passive:false}));
+document.addEventListener('touchmove',e=>{if(e.touches.length>1&&!(e.target.closest&&e.target.closest('.iv')))e.preventDefault()},{passive:false});   // home-screen apps: two-finger pinch outside the image viewer
+document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1&&!(e.target.closest&&e.target.closest('.iv')))e.preventDefault()},{passive:false});
+/* One full-screen photo viewer for every photo (stays, checklists, issues, stock, receipts, reviews): swipe, pinch or
+   double-tap to zoom, share/download, caption with who and when. Any link inside a photo strip opens here. */
+function photoViewer(urls,start,cap){urls=urls.filter(Boolean);if(!urls.length)return;let i=Math.max(0,Math.min(start||0,urls.length-1)),sc=1,tx=0,ty=0;
+  const img=document.createElement('img');img.className='iv-img';img.alt='Photo';
+  const el=(t,c,txt)=>{const e=document.createElement(t);if(c)e.className=c;if(txt!=null)e.textContent=txt;return e};
+  const box=el('div','iv');box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-label','Photo');
+  const top=el('div','iv-top'),cnt=el('span','iv-n'),capE=el('span','iv-cap',cap||''),acts=el('div','iv-acts');
+  const btn=(lab,txt,fn)=>{const b=el('button','iv-b',txt);b.type='button';b.setAttribute('aria-label',lab);b.onclick=e=>{e.stopPropagation();fn()};return b};
+  const close=()=>{box.remove();document.documentElement.classList.remove('iv-open');removeEventListener('keydown',key)};
+  acts.append(btn('Share','Share',async()=>{const u=urls[i];try{if(navigator.share)await navigator.share({url:u,title:cap||'Photo'});else{await navigator.clipboard.writeText(u);(window.jgToast||alert)('Link copied')}}catch(e){}}),
+    btn('Open or download','Save',()=>{const a=document.createElement('a');a.href=urls[i];a.target='_blank';a.rel='noopener';a.download='';document.body.append(a);a.click();a.remove()}),
+    btn('Close','✕',close));
+  top.append(cnt,capE,acts);
+  const stage=el('div','iv-stage');stage.append(img);
+  const prev=btn('Previous photo','‹',()=>show(i-1)),next=btn('Next photo','›',()=>show(i+1));prev.classList.add('iv-prev');next.classList.add('iv-next');
+  box.append(top,stage,prev,next);
+  const apply=()=>{img.style.transform=`translate(${tx}px,${ty}px) scale(${sc})`};
+  const show=k=>{i=(k+urls.length)%urls.length;sc=1;tx=ty=0;apply();img.src=urls[i];cnt.textContent=urls.length>1?`${i+1} / ${urls.length}`:'';prev.hidden=next.hidden=urls.length<2};
+  /* gestures: swipe when not zoomed, pinch to zoom, drag to pan when zoomed, double tap toggles 2.5x */
+  let t0=null,lastTap=0;
+  stage.addEventListener('touchstart',e=>{const t=e.touches;if(t.length===2){t0={d:Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY),sc}}else if(t.length===1){t0={x:t[0].clientX,y:t[0].clientY,tx,ty,at:Date.now()}}},{passive:true});
+  stage.addEventListener('touchmove',e=>{if(!t0)return;const t=e.touches;e.preventDefault();
+    if(t.length===2&&t0.d){sc=Math.max(1,Math.min(5,t0.sc*Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY)/t0.d));if(sc===1){tx=ty=0}apply()}
+    else if(t.length===1&&sc>1&&t0.x!=null){tx=t0.tx+t[0].clientX-t0.x;ty=t0.ty+t[0].clientY-t0.y;apply()}},{passive:false});
+  stage.addEventListener('touchend',e=>{if(!t0)return;const c=e.changedTouches[0];
+    if(t0.x!=null&&sc===1&&c){const dx=c.clientX-t0.x,dy=c.clientY-t0.y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))show(i+(dx<0?1:-1));else if(dy>90&&Math.abs(dy)>Math.abs(dx))close()}
+    const now=Date.now();if(t0.x!=null&&now-lastTap<300){sc=sc>1?1:2.5;tx=ty=0;apply();lastTap=0}else lastTap=now;t0=null},{passive:true});
+  stage.addEventListener('dblclick',()=>{sc=sc>1?1:2.5;tx=ty=0;apply()});
+  stage.addEventListener('wheel',e=>{e.preventDefault();sc=Math.max(1,Math.min(5,sc*(e.deltaY<0?1.15:1/1.15)));if(sc===1){tx=ty=0}apply()},{passive:false});
+  stage.addEventListener('click',e=>{if(e.target===stage)close()});
+  const key=e=>{if(e.key==='Escape')close();else if(e.key==='ArrowRight')show(i+1);else if(e.key==='ArrowLeft')show(i-1)};addEventListener('keydown',key);
+  document.documentElement.classList.add('iv-open');document.body.append(box);show(i)}
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('.pd-photos a,.cl-pics a,[data-pv]');if(!a)return;
+  const box=a.closest('.pd-photos,.cl-pics,[data-pv-group]')||a.parentElement,as=[...box.querySelectorAll('a[href],[data-pv]')];
+  e.preventDefault();e.stopPropagation();photoViewer(as.map(x=>x.dataset.pv||x.getAttribute('href')),as.indexOf(a),box.dataset.cap||a.dataset.cap||'')},true);
+window.photoViewer=photoViewer;
+function h(t,a,...k){const e=document.createElement(t);if(a)for(const[x,v]of Object.entries(a)){if(v==null||v===false)continue;if(x.startsWith('on')&&typeof v==='function')e.addEventListener(x.slice(2),v);else if(x==='class')e.className=v;else if(x==='style'&&typeof v==='object')Object.assign(e.style,v);else if(x in e&&typeof v!=='string')e[x]=v;else e.setAttribute(x,v===true?'':v)}
+  k.flat(9).forEach(c=>{if(c==null||c===false)return;e.append(c instanceof Node?c:document.createTextNode(String(c)))});return e}
+const NS='http://www.w3.org/2000/svg';
+const ICO={today:'M4 6h16v14H4zM4 10h16M9 3v4M15 3v4',check:'M5 12.5l4.5 4.5L19 7.5',box:'M3 7l9-4 9 4-9 4zM3 7v10l9 4 9-4V7M12 11v10',star:'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
+  wrench:'M14.7 6.3a4 4 0 00-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 005.4-5.4l-2.5 2.5-2.5-.5-.5-2.5z',bell:'M6 16V11a6 6 0 1112 0v5l1.5 2h-15zM10 20a2 2 0 004 0',menu:'M4 7h16M4 12h16M4 17h16',cam:'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z',note:'M4 5h16v11H9l-5 4z',tick:'M5 12.5l4.5 4.5L19 7.5',sync:'M20 11a8 8 0 10-2.3 5.7M20 4v7h-7',
+  cloud:'M7 18h10a4 4 0 00.5-8 6 6 0 00-11.5 1.5A3.3 3.3 0 007 18z',clock:'M12 7v5l3 2M12 21a9 9 0 110-18 9 9 0 010 18z',key:'M14 10a4 4 0 11-4-4M14 10l7 7-2 2-2-2-1 1-2-2'};
+const icon=k=>{const s=document.createElementNS(NS,'svg');s.setAttribute('viewBox','0 0 24 24');const p=document.createElementNS(NS,'path');p.setAttribute('d',ICO[k]);s.append(p);return s};
+const store={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const TZ=CLIENT.timezone||'Asia/Kolkata';
+const TODAY=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+const TOMORROW=OPS.addD(TODAY,1);
+const nowIso=()=>new Date().toISOString().slice(0,16);
+const hhmm=()=>new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',minute:'2-digit'}).format(new Date());
+const inr=n=>'₹'+Math.round(+n||0).toLocaleString('en-IN');
+let toastT;function toast(m){document.querySelectorAll('.toast').forEach(t=>t.remove());const t=h('div',{class:'toast',role:'status'},m);document.body.append(t);clearTimeout(toastT);toastT=setTimeout(()=>t.remove(),3400)}
+/* ============ English / Hindi: the words on screen; names, notes and numbers stay as they are ============ */
+const HI={'Today':'आज','Checklists':'चेकलिस्ट','Stock':'स्टॉक','Reviews':'रिव्यू','Issues':'समस्याएँ','Sign in':'साइन इन','Login id':'लॉगिन आईडी','Password':'पासवर्ड','Checking…':'जाँच हो रही है…',
+  'Arriving today':'आज आने वाले','Leaving today':'आज जाने वाले','Arriving tomorrow':'कल आने वाले','No check-ins today.':'आज कोई चेक-इन नहीं।','No check-outs today.':'आज कोई चेक-आउट नहीं।','Nobody tomorrow.':'कल कोई नहीं।',
+  'Guest alerts':'मेहमान अलर्ट','My score':'मेरा स्कोर','Checklist':'चेकलिस्ट','Checklist done':'चेकलिस्ट हो गई','Arrived':'आ गए','Checked out':'चले गए','Ready':'तैयार','Check-in info':'चेक-इन जानकारी',
+  'Clean first':'पहले सफ़ाई करें','next guest arrives today':'अगला मेहमान आज आ रहा है','ready by':'तैयार करें','Do it':'करें','Late':'देर','Done':'हो गया','Count':'गिनें','Submit checklist':'चेकलिस्ट भेजें','Submit stock check':'स्टॉक भेजें',
+  'Photos (at least one)':'फ़ोटो (कम से कम एक)','Notes':'नोट्स','Issues found':'मिली समस्याएँ','Ask for a review':'रिव्यू माँगें','I asked':'मैंने पूछा','Waiting for admin':'एडमिन की प्रतीक्षा','Add the stars':'स्टार डालें','Recent':'हाल के',
+  'Report an issue':'समस्या बताएँ','Log an expense':'खर्च लिखें','Send to admin':'एडमिन को भेजें','Send claim':'क्लेम भेजें','Stay':'प्रॉपर्टी','Date':'तारीख','Category':'श्रेणी','Amount (₹)':'राशि (₹)','What it was':'किस लिए',
+  'Receipt photo':'रसीद की फ़ोटो','What’s wrong':'क्या खराब है','How soon':'कितनी जल्दी','Urgent':'तुरंत','Soon':'जल्द','Routine':'सामान्य','Menu':'मेनू','Refresh now':'अभी रिफ़्रेश करें','Sign out':'साइन आउट',
+  "What's new":'नया क्या है','Mark all seen':'सब देख लिया','Nothing new since you last looked.':'पिछली बार के बाद कुछ नया नहीं।','My expense claims':'मेरे खर्च क्लेम','My money':'मेरा पैसा','Waiting':'प्रतीक्षा में',
+  'Paid back this month':'इस महीने वापस मिला','Not approved':'मंज़ूर नहीं','Approved':'मंज़ूर','Settled':'चुकता','Issues at your stays':'आपकी प्रॉपर्टी की समस्याएँ','waiting to send':'भेजना बाकी',
+  'Saved on the phone · sends when online':'फ़ोन में सेव · नेटवर्क आने पर भेजेंगे','Language':'भाषा','Rating':'रेटिंग','What the guest wrote (optional)':'मेहमान ने क्या लिखा (वैकल्पिक)','Save rating':'रेटिंग सेव करें',
+  'Stock checks':'स्टॉक जाँच','Map':'नक्शा','Add a comment':'टिप्पणी जोड़ें','Add a photo':'फ़ोटो जोड़ें','Photo needed':'फ़ोटो ज़रूरी','Remove photo':'फ़ोटो हटाएँ','of':'में से','done':'पूरा',
+  'should be':'होना चाहिए','Room photos':'कमरों की फ़ोटो','not done':'नहीं हुआ','Add a photo of':'इसकी फ़ोटो जोड़ें','Fill in':'भरें','Other photos (optional)':'अन्य फ़ोटो (वैकल्पिक)','Guest requests':'मेहमान की माँगें','On it':'कर रहे हैं','Checkout checklists':'चेकआउट चेकलिस्ट','Loading your stays…':'आपकी प्रॉपर्टी लोड हो रही है…','min':'कम से कम','last':'पिछली बार'};
+let LANG=store.get('mg_lang')||'en';const T=s=>LANG==='hi'&&HI[s]||s;
+/* ============ the Register (same Google Sheet as the dashboard and the WhatsApp bot) ============ */
+const S={key:store.get('mg_session')||'',me:store.get('mg_me')||null,d:store.get('mg_cache')||null,tab:'today',busy:false,q:0};
+/* a WhatsApp alert links straight to a tab: .../manager/#issues */
+const hashTab=()=>{const k=location.hash.slice(1);return['today','check','stock','reviews','issues'].includes(k)?k:null};
+if(hashTab())S.tab=hashTab();addEventListener('hashchange',()=>{const k=hashTab();if(k&&k!==S.tab){S.tab=k;render();scrollTo(0,0)}});
+async function api(body){let r;try{r=await fetch(CLIENT.api_url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({key:S.key,device:'Manager app',...body})})}
+  catch(e){const x=new Error('offline');x.offline=true;throw x}
+  let j;try{j=await r.json()}catch(e){const x=new Error('offline');x.offline=true;throw x}if(j.error){const x=new Error(j.error);x.server=true;throw x}return j}
+async function load(){S.busy=true;try{const d=await api({action:'read',format:'dashboard'});
+    S.d={props:d.props||[],bookings:(d.bookings||[]).map(b=>({...b,booking_id:String(b.booking_id),check_in:String(b.check_in).slice(0,10),check_out:String(b.check_out).slice(0,10)})),maint:d.maint||[],reviews:d.reviews||[],
+      checklists:d.checklists||[],requests:d.requests||[],stock:d.stock||[],turnovers:d.turnovers||[],claims:d.claims||[],movements:d.movements||[],ops:d.ops||[],leaves:d.leaves||[],plan:d.plan||null,checkin_info:d.checkin_info||[],at:Date.now()};
+    if(d.me){S.me=d.me;store.set('mg_me',d.me)}store.set('mg_cache',S.d);await queued()}
+  catch(e){if(/unauthorized/.test(e.message)){try{await api({action:'me'})}catch(x){if(/unauthorized/.test(x.message))return signOut('Your sign-in ended. Sign in again.')}}
+    toast(S.d?'Couldn’t refresh just now · showing the last data':'Couldn’t reach the sheet. Check the connection.')}finally{S.busy=false;render()}}
+function signOut(msg){api({action:'logout'}).catch(()=>{});S.key='';S.me=null;S.d=null;store.set('mg_session','');store.set('mg_me',null);store.set('mg_cache',null);loginScreen(msg)}
+/* ============ outbox: anything saved without a connection waits on the phone (with its photos) and is sent when the
+   connection is back. A refusal from the sheet (not your stay, etc.) is shown and dropped: retrying would not help. ============ */
+const OB=(()=>{let dbP=null;const db=()=>dbP=dbP||new Promise((ok,no)=>{if(!window.indexedDB)return no(new Error('no idb'));const r=indexedDB.open('mg_outbox',1);r.onupgradeneeded=()=>r.result.createObjectStore('q',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+  const tx=(mode,fn)=>db().then(d=>new Promise((ok,no)=>{const t=d.transaction('q',mode),st=t.objectStore('q'),res=fn(st);t.oncomplete=()=>ok(res&&res.result);t.onerror=()=>no(t.error)}));
+  const ls=()=>store.get('mg_outbox')||[];
+  return{add:it=>tx('readwrite',st=>st.put(it)).catch(()=>{const a=ls();a.push(it);store.set('mg_outbox',a)}),
+    all:()=>tx('readonly',st=>st.getAll()).then(a=>(a||[]).concat(ls())).catch(()=>ls()),
+    del:id=>tx('readwrite',st=>st.delete(id)).catch(()=>{}).then(()=>store.set('mg_outbox',ls().filter(x=>x.id!==id)))}})();
+async function queued(){const a=await OB.all();S.q=a.length;return a}
+async function sendOne(it){const p=JSON.parse(JSON.stringify(it.payload));
+  if(it.photos&&it.photos.length){const urls=[],slots={};for(let i=0;i<it.photos.length;i++){const ph=it.photos[i],r=await api({action:'upload',kind:it.kind||'checklist',name:`${it.name||'photo'} ${i+1}`,mime:'image/jpeg',data:ph.b64});const u=r.thumb||r.url;urls.push(u);if(ph.slot)(slots[ph.slot]=slots[ph.slot]||[]).push(u)}
+    if(p.fields)p.fields[it.photoField||'photos']=urls.length===1?urls[0]:JSON.stringify(urls);   // an update (a task's done photo)
+    else{p.row[it.photoField||'photos']=JSON.stringify(urls);if(Object.keys(slots).length)p.row.photo_slots=JSON.stringify(slots)}}
+  await api({action:it.op,tab:it.tab,...p})}
+let flushing=false;
+async function flush(){if(flushing||!S.key)return;flushing=true;let sent=0;try{for(const it of(await OB.all()).sort((a,b)=>a.id.localeCompare(b.id))){try{await sendOne(it);await OB.del(it.id);sent++}
+    catch(e){if(e.offline)break;await OB.del(it.id);toast(`${it.label||'A change'} wasn’t accepted: ${e.message.replace(/^not allowed: /,'')}`)}}}finally{flushing=false;await queued();if(sent){toast(`${sent} saved change${sent>1?'s':''} sent ✓`);load()}else render()}}
+/* Geotag: where the phone is when a checklist, stock check or issue is sent. The sheet works out the distance to the
+   stay's map pin and flags anything over 200 m to the admin. Location refused = it can't be sent; no GPS fix in 15 s =
+   sent anyway, marked "no location". Off when the admin sets ops.geotag = off. */
+const geoOn=()=>{const r=((S.d||{}).ops||[]).filter(x=>x.key==='ops.geotag').pop(),pf=(((S.d||{}).plan||{}).features||{}).geotag;return!(r&&/^(off|no|false|0)$/i.test(String(r.value||'').trim()))&&!/^(off|no|false|0)$/i.test(String(pf||''))};
+function geoNow(){return new Promise(ok=>{if(!navigator.geolocation)return ok({flag:'no_fix'});
+  navigator.geolocation.getCurrentPosition(p=>ok({lat:+p.coords.latitude.toFixed(6),lng:+p.coords.longitude.toFixed(6),acc:Math.round(p.coords.accuracy||0)}),
+    e=>ok(e&&e.code===1?{denied:true}:{flag:'no_fix'}),{enableHighAccuracy:true,timeout:15000,maximumAge:60000})})}
+async function geoFields(err){if(!geoOn())return{};const g=await geoNow();
+  if(g.denied){err.hidden=false;err.textContent=T('Location is off for this app. Allow location in your phone settings, then send again. It confirms you are at the stay.');return null}
+  return g.flag?{geo_flag:g.flag,geo_at:nowIso()}:{geo_lat:g.lat,geo_lng:g.lng,geo_acc_m:g.acc,geo_at:nowIso()}}
+/* send now; without a connection keep it in the outbox and show it as done */
+async function write(op,tab,payload,msg,extra){if(['readonly','off'].includes(String(((S.d||{}).plan||{}).status||''))){toast(T('Read-only for now · ask your admin'));return false}const it={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),op,tab,payload,label:msg,...(extra||{})};
+  try{await sendOne(it);toast(T(msg)+' ✓');return'sent'}
+  catch(e){if(!e.offline){toast('Not saved: '+e.message.replace(/^not allowed: /,''));return false}
+    await OB.add(it);await queued();localApply(op,tab,payload);toast(T('Saved on the phone · sends when online'));return'queued'}}
+function localApply(op,tab,p){const k={maintenance:'maint'}[tab]||tab;if(!S.d||!S.d[k])return;
+  if(op==='append')S.d[k].push({...p.row,status:tab==='maintenance'?'Pending approval':tab==='claims'?'pending':p.row.status,_queued:true});
+  else{const r=S.d[k].find(x=>Object.entries(p.match).every(([a,b])=>String(x[a])===String(b)));if(r)Object.assign(r,p.fields,{_queued:true})}store.set('mg_cache',S.d)}
+/* ============ sign-in ============ */
+function loginScreen(msg){const id=h('input',{autocomplete:'username',autocapitalize:'none',spellcheck:'false',placeholder:T('Login id')}),pw=h('input',{type:'password',autocomplete:'current-password',placeholder:T('Password')}),err=h('div',{class:'err',hidden:!msg},msg||'');
+  const go=h('button',{class:'btn primary full',type:'submit'},T('Sign in'));
+  const f=h('form',{class:'form',onsubmit:async e=>{e.preventDefault();if(!id.value.trim()||!pw.value){err.hidden=false;err.textContent='Enter your login id and password.';return}go.disabled=true;go.textContent=T('Checking…');
+    try{const r=await fetch(CLIENT.api_url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login_pw',login:id.value.trim(),password:pw.value,device:'Manager app · '+(navigator.platform||'phone')})}),j=await r.json();
+      if(!j.ok){go.disabled=false;go.textContent=T('Sign in');err.hidden=false;err.textContent=j.error==='locked'?`Too many tries. Try again in ${j.wait_min||15} minutes.`:j.error==='wrong_login'?'Login id or password is wrong.':j.error||'Sign-in failed.';return}
+      S.key=j.session;S.me=j.user;store.set('mg_session',j.session);store.set('mg_me',j.user);S.tab=hashTab()||'today';await load();
+      const others=j.other_devices||[];if(others.length){const close=sheet(T('Signed in on another phone'),h('p',{class:'hint'},`${others.map(o=>o.device).slice(0,3).join(', ')}. ${T('Sign out there? One phone at a time keeps your stays safe.')}`),
+        h('div',{class:'form'},h('button',{class:'btn primary full',onclick:()=>{close();api({action:'logout_others'}).then(r=>toast(`${r.ended||0} ${T('signed out')} ✓`)).catch(e=>toast(e.message))}},T('Sign out the other phone')),h('button',{class:'btn full',onclick:()=>close()},T('Keep both'))))}}
+    catch(x){go.disabled=false;go.textContent=T('Sign in');err.hidden=false;err.textContent='Couldn’t reach the sheet. Check the connection.'}}},h('label',null,T('Login id'),id),h('label',null,T('Password'),pw),err,go);
+  $('#app').replaceChildren(h('div',{class:'login'},h('div',{class:'card'},CLIENT.logo?h('img',{src:'../'+CLIENT.logo.dark,alt:CLIENT.brand,style:{height:'34px',justifySelf:'start'},onerror:e=>e.target.remove()}):null,
+    h('h1',null,'Manager ',h('em',null,'app')),h('p',{class:'hint'},`${CLIENT.brand||''} · your stays, check-ins, checklists and reviews. Your admin gives you the login id and password.`),f,langBtn())))}
+const langBtn=()=>h('div',{class:'lang'},h('span',null,T('Language')),h('div',{class:'yn'},[['en','English'],['hi','हिंदी']].map(([k,l])=>h('button',{type:'button','aria-pressed':LANG===k,onclick:()=>{LANG=k;store.set('mg_lang',k);document.documentElement.lang=k;S.key?render():loginScreen()}},l))));
+/* ============ what this manager covers ============ */
+const C=()=>OPS.cfg((S.d||{}).ops,CLIENT);
+const myStays=()=>new Set(S.me&&S.me.properties||[]);
+const inS=pid=>myStays().has(pid);
+const P=pid=>((S.d||{}).props||[]).find(p=>p.property_id===pid)||{};
+const nm=pid=>String(P(pid).property||pid||'').replace(/\s*\(.*?\)/g,'').split(',')[0].trim();
+const fmtD=(s,o)=>new Date(String(s).slice(0,10)+'T12:00:00').toLocaleDateString(LANG==='hi'?'hi-IN':'en-IN',o||{day:'numeric',month:'short'});
+const live=b=>b&&!b.deleted_at&&String(b.booking_status||'Confirmed')!=='Cancelled';
+const SEEN='mg_seen';const seenAt=()=>{let t=store.get(SEEN);if(!t){t=new Date(Date.now()-2*864e5).toISOString();store.set(SEEN,t)}const srv=S.me&&S.me.seen_at;return srv&&String(srv)>t?String(srv):t};
+const news=()=>S.d?OPS.news({...S.d,maint:S.d.maint},seenAt(),'manager',{inScope:inS}):[];
+function due(){const c=C(),d=S.d;return{check:OPS.checklists(d.bookings,d.checklists,TODAY,c,inS,d.props),stock:OPS.stock(d.props,d.stock,TODAY,c,inS),rev:OPS.reviews(d.bookings,d.reviews,TODAY,c,inS)}}
+const toRate=u=>u.rev.filter(x=>x.status==='received'&&!(x.row&&+x.row.rating>0));
+/* leave and cover: stays I cover today for someone on leave (the sheet adds them to my stays), my own leave */
+const myId=()=>!S.me?'':S.me.email?String(S.me.email).trim().toLowerCase():'login:'+String(S.me.login||'').trim().toLowerCase();   // as the sheet names them: email first
+const covers=()=>(S.me&&S.me.cover)||[];
+const coverFor=pid=>covers().find(c=>(c.stays||[]).includes(pid));
+const cvTag=pid=>{const c=coverFor(pid);return c?h('span',{class:'cv-tag',title:'Covering for '+c.user_name},T('Cover')):null};
+const myLeaves=()=>((S.d||{}).leaves||[]).filter(l=>String(l.user||'').toLowerCase()===myId()).sort((x,y)=>String(y.from).localeCompare(String(x.from)));
+const leaveNow=()=>myLeaves().find(l=>l.status==='approved'&&String(l.to).slice(0,10)>=TODAY);
+/* Help: a question to scalewithluv; replies show here (C7) */
+async function helpSheet(){const q=h('textarea',{rows:4,maxlength:2000,placeholder:T('What do you need help with?')}),err=h('div',{class:'err',hidden:true}),go=h('button',{class:'btn primary full'},T('Send')),list=h('div',{class:'lv-list'});
+  const close=sheet(T('Help'),h('p',{class:'hint'},T('Ask anything about the app. The reply shows here.')),h('div',{class:'form'},h('label',null,T('Your question'),q),err,go),list);
+  go.addEventListener('click',async()=>{if(q.value.trim().length<3){err.hidden=false;err.textContent=T('Write your question first.');return}go.disabled=true;
+    try{await api({action:'support_ask',message:q.value.trim(),page:'manager app',device:navigator.userAgent.slice(0,100)});close();toast(T('Sent')+' ✓')}catch(e){err.hidden=false;err.textContent=e.message;go.disabled=false}});
+  try{const j=await api({action:'support_mine'});(j.tickets||[]).slice(0,5).forEach(t=>list.append(h('div',{class:'row'},h('div',{class:'t'},h('b',null,t.message.slice(0,100)),h('span',null,t.reply||T('Waiting for a reply'))))))}catch(e){}}
+function leaveSheet(){const f=h('input',{type:'date',min:TODAY,value:TOMORROW}),t=h('input',{type:'date',min:TODAY,value:TOMORROW}),why=h('input',{placeholder:T('e.g. Family wedding'),maxlength:200}),err=h('div',{class:'err',hidden:true}),go=h('button',{class:'btn primary full'},T('Send request'));
+  const st={pending:['p-warn','Waiting'],approved:['p-ok','Approved'],rejected:['p-bad','Declined'],cancelled:['','Cancelled']};
+  const mine=myLeaves().slice(0,6);
+  const close=sheet(T('Leave'),h('p',{class:'hint'},T('Ask for days off. Your admin approves it and picks who covers your stays; their app gets your tasks for those days.')),
+    h('div',{class:'form'},h('label',null,T('From'),f),h('label',null,T('To (last day off)'),t),h('label',null,T('Reason (optional)'),why),err,go),
+    mine.length?h('div',{class:'lv-list'},h('h4',{class:'sub'},T('Your requests')),...mine.map(l=>{const s=st[l.status]||['',l.status];
+      return h('div',{class:'row'},h('div',{class:'t'},h('b',null,`${fmtD(l.from)} – ${fmtD(l.to,{day:'numeric',month:'short',year:'numeric'})}`),h('span',null,[l.reason,l.status==='approved'&&l.cover_name?T('Covered by')+' '+l.cover_name:null].filter(Boolean).join(' · ')||' ')),h('span',{class:'pill '+s[0]},T(s[1])))})):null);
+  go.addEventListener('click',async()=>{if(!f.value||!t.value||t.value<f.value){err.hidden=false;err.textContent=T('Pick the first and the last day off.');return}
+    if(t.value<TODAY){err.hidden=false;err.textContent=T('Those dates are over.');return}go.disabled=true;
+    const ok=await write('append','leaves',{row:{leave_id:'LV'+Date.now().toString(36).toUpperCase(),from:f.value,to:t.value,reason:why.value.trim()||null,requested_at:nowIso()}},'Leave request sent');
+    if(ok){close();ok==='sent'?load():render()}else go.disabled=false})}
+/* ============ screens ============ */
+const TABS=[['today','Today','today'],['check','Checklists','check'],['stock','Stock','box'],['reviews','Reviews','star'],['issues','Issues','wrench']];
+function render(){if(!S.key)return loginScreen();if(!S.d){$('#app').replaceChildren(h('div',{class:'loading'},h('span',{class:'spin'}),T('Loading your stays…')));return}
+  const u=due(),nc=news().reduce((t,c)=>t+c.items.length,0),cnt={today:openTasks().length,check:u.check.filter(x=>x.status!=='done').length,stock:u.stock.filter(x=>x.current&&x.current.status==='due').length,reviews:u.rev.filter(x=>x.status==='open').length+toRate(u).length,
+    issues:S.d.maint.filter(m=>inS(m.property_id)&&/whatsapp/i.test(m.source||'')&&!/^(closed|rejected)$/i.test(m.status||'')).length};
+  const top=h('header',{class:'top'},h('div',{class:'who'},h('b',null,(S.me&&S.me.name||'Manager').split(' ')[0]),h('small',null,`${myStays().size} stay${myStays().size===1?'':'s'} · ${fmtD(TODAY,{weekday:'long',day:'numeric',month:'short'})}`)),
+    S.q?h('button',{class:'ic q','aria-label':`${S.q} ${T('waiting to send')}`,onclick:()=>{toast(`${S.q} ${T('waiting to send')}`);flush()}},icon('cloud'),h('span',{class:'badge warn'},S.q)):null,
+    h('button',{class:'ic','aria-label':nc?`What's new: ${nc}`:"What's new",onclick:openNews},icon('bell'),nc?h('span',{class:'badge'},nc>99?'99+':nc):null),
+    h('button',{class:'ic','aria-label':T('Menu'),onclick:openMenu},icon('menu')));
+  const main=h('main',null);({today,check:checkScreen,stock:stockScreen,reviews:reviewScreen,issues:issueScreen})[S.tab](main,u);
+  const tabs=h('nav',{class:'tabs','aria-label':'Sections'},TABS.map(([k,l,ic])=>h('button',{'aria-current':S.tab===k?'page':null,onclick:()=>{S.tab=k;render();scrollTo(0,0)}},icon(ic),T(l),cnt[k]?h('span',{class:'badge'},cnt[k]):null)));
+  $('#app').replaceChildren(top,main,tabs)}
+function card(title,right,...body){return h('section',{class:'card'},h('h2',null,T(title),right?h('small',null,right):null),...body)}
+/* guest requests for my stays that aren't done (towels, gas cylinder, cleaning...): the bot tells the guest when done */
+const meId=()=>{const m=S.me||{};return String(m.email||'').trim().toLowerCase()||'login:'+String(m.login||'').trim().toLowerCase()};
+/* my stays' tasks, plus any where I'm the backup; the ones with a due time first, by due time */
+const isBackup=r=>!!r.backup&&String(r.backup).toLowerCase()===meId();
+const openTasks=()=>((S.d||{}).requests||[]).filter(r=>String(r.type||'')==='task'&&(inS(r.property_id)||isBackup(r))&&!/^done$/i.test(r.status||''))
+  .sort((a,b)=>(a.due_at?0:1)-(b.due_at?0:1)||String(a.due_at||a.created_at).localeCompare(String(b.due_at||b.created_at)));
+const dueTxt=r=>{if(!r.due_at)return null;const d=new Date(String(r.due_at).replace(' ','T'));if(isNaN(d))return null;const late=d<new Date();
+  return {late,txt:(late?T('overdue')+' · ':T('by')+' ')+d.toLocaleString('en-IN',{hour:'numeric',minute:'2-digit',...(d.toDateString()===new Date().toDateString()?{}:{day:'numeric',month:'short'})})}};
+/* done: an optional photo of the finished job, sent with the update (queued offline like everything else) */
+function taskDone(r){let ph=null;const pv=h('div',{class:'pv'}),fi=h('input',{type:'file',accept:'image/*',capture:'environment',hidden:true,'aria-label':T('Add a photo')});
+  fi.addEventListener('change',async()=>{const f=fi.files[0];if(!f)return;try{const b64=await shrink(f);ph={b64};pv.replaceChildren(h('img',{src:'data:image/jpeg;base64,'+b64,alt:T('Done photo'),style:{maxWidth:'100%',borderRadius:'12px'}}))}catch(e){toast(T('That file isn’t a photo'))}});
+  const close=sheet(T('Done')+' · '+r.addon,h('p',{class:'hint'},nm(r.property_id)+' · '+T('a photo of the finished job helps (optional)')),fi,pv,
+    h('div',{class:'acts'},h('button',{class:'btn',onclick:()=>fi.click()},T('Add a photo')),h('button',{class:'btn primary',onclick:()=>{close();
+      write('update','requests',{match:{request_id:r.request_id},fields:{status:'Done'}},T('Done · the guest is told'),ph?{photos:[ph],photoField:'done_photo',kind:'task',name:'Done '+r.addon}:null).then(ok=>{if(ok==='sent')load();else render()})}},T('Done'))))}
+const ago=t=>{const m=Math.max(0,Math.round((Date.now()-new Date(String(t).replace(' ','T')).getTime())/6e4));return isNaN(m)?'':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'};
+function taskSet(r,status){write('update','requests',{match:{request_id:r.request_id},fields:{status}},status==='Done'?'Done · the guest is told':'Marked on it').then(ok=>{if(ok==='sent')load();else render()})}
+/* the stay's map link: its own maps_url, else one from its pin (lat/lng, or a pasted Google Maps link) */
+const mapOf=p=>{if(!p)return null;if(p.maps_url)return p.maps_url;let la=+p.lat,lo=+p.lng;if(!(la&&lo)){const s=String(p.map_pin||''),m=[...s.matchAll(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/g)].pop()||s.match(/[?&](?:q|query|ll)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/)||s.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);if(m){la=+m[1];lo=+m[2]}}
+  return la&&lo?`https://www.google.com/maps/search/?api=1&query=${la},${lo}`:null};
+const moved=(b,kind)=>(S.d.movements||[]).filter(x=>String(x.booking_id)===b.booking_id&&x.kind===kind).pop();
+function moveMark(b,kind,steps){const st_=kind==='arrived'?OPS.cityStepsOf(C(),P(b.property_id).city):[];
+  /* the city's arrival steps (a local registration, say) are ticked first */
+  if(st_.length&&!steps){const ticks={},err=h('div',{class:'err',hidden:true}),go=h('button',{class:'btn primary full'},T('Arrived'));
+    const close=sheet(T('Arrived')+' · '+(b.guest||'Guest'),h('p',{class:'hint'},`${nm(b.property_id)} · steps for ${P(b.property_id).city}`),h('div',{class:'form'},...st_.map(sx=>{const cb=h('input',{type:'checkbox',onchange:e=>{ticks[sx]=e.target.checked;lab.classList.toggle('on',e.target.checked)}}),lab=h('label',{class:'ck'},cb,sx);return lab}),err,go));
+    go.addEventListener('click',()=>{const miss=st_.filter(sx=>!ticks[sx]);if(miss.length&&!go.dataset.ok){go.dataset.ok='1';err.hidden=false;err.textContent=`${miss.length} step${miss.length>1?'s':''} not ticked. Tap again to mark arrived anyway.`;return}close();moveMark(b,kind,Object.fromEntries(st_.map(sx=>[sx,!!ticks[sx]])))});return}
+  write('append','movements',{row:{move_id:'MV'+Date.now().toString(36).toUpperCase(),booking_id:b.booking_id,property_id:b.property_id,kind,at:TODAY+'T'+hhmm(),steps:steps?JSON.stringify(steps):null}},kind==='arrived'?'Marked arrived':'Marked checked out').then(ok=>{if(ok==='sent')load();else render()})}
+/* check-in steps for the guest's stay (or the whole place it belongs to): never door codes or Wi-Fi passwords */
+const infoFor=pid=>(S.d.checkin_info||[]).find(x=>x.property_id===pid)||(S.d.checkin_info||[]).find(x=>x.property_id===OPS.parentOf(pid,S.d.props))||null;
+function coverBanners(m){const lv=leaveNow();
+  if(lv)m.append(h('section',{class:'card cv-note'},h('b',null,lv.from<=TODAY?T('You are on leave'):T('Leave approved')),h('span',null,`${fmtD(lv.from)} – ${fmtD(lv.to)}${lv.cover_name?' · '+T('Covered by')+' '+lv.cover_name:''}`)));
+  covers().forEach(c=>m.append(h('section',{class:'card cv-note on'},h('b',null,T('Covering for')+' '+c.user_name),h('span',null,`${T('until')} ${fmtD(c.to)} · ${c.stays.map(nm).filter(Boolean).join(', ')} · ${T('their tasks are tagged Cover')}`))))}
+function today(m,u){coverBanners(m);const B=S.d.bookings.filter(b=>live(b)&&inS(b.property_id)),ins=B.filter(b=>b.check_in===TODAY),tom=B.filter(b=>b.check_in===TOMORROW),outs=B.filter(b=>b.check_out===TODAY);
+  const sc=OPS.scorecards([{role:'Manager',properties:S.me&&S.me.properties||[],name:S.me&&S.me.name,email:S.me&&S.me.email,login:S.me&&S.me.login}],{...S.d},TODAY,C())[0];
+  /* same-day turnovers first: the next guest arrives today */
+  const urg=u.check.filter(x=>x.urgent);
+  if(urg.length)m.append(h('section',{class:'card urgent'},h('h2',null,icon('clock'),T('Clean first'),h('small',null,T('next guest arrives today'))),urg.map(x=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,nm(x.property_id),cvTag(x.property_id)),
+    h('span',null,`${T('ready by')} ${x.dueTime} · ${x.next.guest||'Guest'} · ${x.next.guests||''} guests`)),h('button',{class:'btn sm primary',onclick:()=>checklistForm(x.booking)},T('Checklist'))))));
+  const chips=[[u.check.filter(x=>x.status!=='done').length,'checklists to do','check'],[u.stock.filter(x=>x.current&&x.current.status==='due').length,'stock checks due','stock'],[u.rev.filter(x=>x.status==='open').length,'reviews to ask for','reviews'],[toRate(u).length,'ratings to add','reviews']].filter(x=>x[0]);
+  if(chips.length)m.append(h('div',{class:'chips'},chips.map(([n,l,t])=>h('button',{class:'chip',onclick:()=>{S.tab=t;render()}},h('b',null,n),l))));
+  const bk=(b,kind)=>{const t=(S.d.turnovers||[]).find(x=>String(x.booking_id)===b.booking_id),done=t&&t.status==='Done',cl=S.d.checklists.find(x=>String(x.booking_id)===b.booking_id),mv=moved(b,kind==='in'?'arrived':'left'),info=kind==='in'?infoFor(b.property_id):null;
+    const r=h('div',{class:'row'},h('div',{class:'t'},h('b',null,`${b.guest||'Guest'} · ${b.guests||''} guest${+b.guests===1?'':'s'}`),cvTag(b.property_id),h('span',null,`${nm(b.property_id)} · ${kind==='in'?(b.arrival_time?'arriving '+b.arrival_time:'arrival time not set'):'check-out by 11:00'} · ${b.channel||''}`)),
+      h('div',{class:'acts'},mv?h('span',{class:'pill p-ok'},`${T(kind==='in'?'Arrived':'Checked out')} ${String(mv.at||'').slice(11,16)}`):kind!=='tom'?h('button',{class:'btn sm',onclick:()=>moveMark(b,kind==='in'?'arrived':'left')},T(kind==='in'?'Arrived':'Checked out')):null,
+        kind==='out'?(cl?h('span',{class:'pill p-ok'},T('Checklist done')):h('button',{class:'btn sm primary',onclick:()=>checklistForm(b)},T('Checklist'))):done&&kind==='in'?h('span',{class:'pill p-ok'},T('Ready')):null,
+        mapOf(P(b.property_id))?h('a',{class:'btn sm',href:mapOf(P(b.property_id)),target:'_blank',rel:'noopener','aria-label':T('Map')},'📍 '+T('Map')):null,
+        kind!=='out'&&OPS.cityStepsOf(C(),P(b.property_id).city).length&&!mv?h('span',{class:'pill p-warn'},`${OPS.cityStepsOf(C(),P(b.property_id).city).length} arrival step${OPS.cityStepsOf(C(),P(b.property_id).city).length>1?'s':''}`):null));
+    return info?h('div',null,r,h('details',{class:'info'},h('summary',null,T('Check-in info')),[['Check-in steps','checkin_steps'],['Parking','parking'],['House rules','house_rules'],['Directions','directions'],['Check-out','checkout_note']].filter(([,k])=>info[k]).map(([l,k])=>h('p',null,h('b',null,l+': '),String(info[k]))))):r};
+  m.append(card('Arriving today',ins.length?String(ins.length):'',ins.length?ins.map(b=>bk(b,'in')):h('div',{class:'empty'},T('No check-ins today.'))));
+  m.append(card('Leaving today',outs.length?String(outs.length):'',outs.length?outs.map(b=>bk(b,'out')):h('div',{class:'empty'},T('No check-outs today.'))));
+  m.append(card('Arriving tomorrow',tom.length?String(tom.length):'',tom.length?tom.map(b=>bk(b,'tom')):h('div',{class:'empty'},T('Nobody tomorrow.'))));
+  const al=S.d.maint.filter(x=>inS(x.property_id)&&/whatsapp/i.test(x.source||'')&&!/^(closed|rejected)$/i.test(x.status||''));
+  {const ts=openTasks();if(ts.length)m.append(h('section',{class:'card tasks'},h('h2',null,icon('bell'),T('Guest requests'),h('small',null,String(ts.length))),
+    ts.map(r=>{const du=dueTxt(r);return h('div',{class:'row'},h('div',{class:'t'},h('b',null,r.addon,du?h('span',{class:'pill '+(du.late?'p-bad':'p-warn'),style:{marginLeft:'6px'}},du.txt):null),h('span',null,[nm(r.property_id),r.details||null,'asked '+ago(r.created_at),r.status==='In progress'?'on it':null,isBackup(r)&&!inS(r.property_id)?T('you are the backup'):null].filter(Boolean).join(' · '))),
+      h('div',{class:'acts'},r.status==='In progress'?null:h('button',{class:'btn sm',onclick:()=>taskSet(r,'In progress')},T('On it')),h('button',{class:'btn sm primary',onclick:()=>taskDone(r)},T('Done'))))})))}
+  if(al.length)m.append(card('Guest alerts',String(al.length),al.map(x=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,x.issue),h('span',null,`${nm(x.property_id)} · ${x.ticket_id} · ${x.status||'Open'}`)),h('span',{class:'pill '+(x.priority==='High'?'p-bad':'p-warn')},T(x.priority==='High'?'Urgent':'Soon'))))));
+  if(sc)m.append(card('My score',`since ${fmtD(C().start)}`,h('div',{class:'stats'},[['Reviews',sc.reviews.received,sc.reviews.missed],['Checklists',sc.checklists.done,sc.checklists.missed],['Stock checks',sc.stock.done,sc.stock.missed]].map(([l,a,b])=>h('div',{class:'stat'},h('b',null,h('span',{class:'ok'},a),' / ',h('span',{class:'bad'},b)),h('span',null,T(l)+' done / missed')))),
+    sc.reviews.avg!=null?h('p',{class:'hint'},`Average rating of the reviews you asked for: ${sc.reviews.avg} ★`):null,
+    h('p',{class:'hint'},'Reviews count once your admin confirms they arrived.')));
+  m.append(moneyCard())}  // null-safe: nothing when there's no money card
+/* what the manager paid and got back */
+function moneyCard(){const cl=S.d.claims||[],mk=TODAY.slice(0,7),wait=cl.filter(c=>String(c.status||'pending')==='pending'),back=cl.filter(c=>c.status==='approved'&&String(c.settled_on||c.decided_at||'').slice(0,7)===mk);
+  if(!cl.length)return null;return card('My money',null,h('div',{class:'stats two'},h('div',{class:'stat'},h('b',null,inr(wait.reduce((t,c)=>t+(+c.amount||0),0))),h('span',null,`${T('Waiting')} · ${wait.length}`)),
+    h('div',{class:'stat'},h('b',{class:'ok'},inr(back.reduce((t,c)=>t+(+c.amount||0),0))),h('span',null,T('Paid back this month')))))}
+function checkScreen(m,u){const todo=u.check.filter(x=>x.status!=='done'),done=u.check.filter(x=>x.status==='done').slice(0,10);
+  m.append(card('Checkout checklists',todo.length?todo.length+' to do':'all done',todo.length?todo.map(x=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,`${nm(x.property_id)} · ${x.booking.guest||'Guest'}`),h('span',null,`checked out ${fmtD(x.check_out)}${x.urgent?' · '+T('ready by')+' '+x.dueTime:''}`)),
+      x.urgent?h('span',{class:'pill p-bad'},T('Urgent')):x.status==='missed'?h('span',{class:'pill p-bad'},T('Late')):null,h('button',{class:'btn sm primary',onclick:()=>checklistForm(x.booking)},T('Do it')))):h('div',{class:'empty'},'Nothing to do. Each check-out needs a checklist with photos by the next day.')));
+  if(done.length)m.append(card('Done',null,done.map(x=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,nm(x.property_id),cvTag(x.property_id)),h('span',null,`out ${fmtD(x.check_out)} · done ${x.row&&x.row.done_at?fmtD(x.row.done_at):''}`)),h('span',{class:'pill p-ok'},T('Done'))))))}
+function stockScreen(m,u){m.append(card('Stock checks',`every ${C().every} days`,u.stock.length?u.stock.map(x=>{const c=x.current||{};return h('div',{class:'row'},h('div',{class:'t'},h('b',null,nm(x.property_id),cvTag(x.property_id)),h('span',null,c.status==='done'?`done for this round (until ${fmtD(c.until)})`:`due by ${fmtD(c.until||TODAY)}`+(x.last?` · last ${fmtD(x.last.day)}`:''))),
+    c.status==='done'?h('span',{class:'pill p-ok'},T('Done')):h('button',{class:'btn sm primary',onclick:()=>stockForm(x.property_id)},T('Count')))}):h('div',{class:'empty'},'No stays assigned yet.')));
+  /* below the minimum at my stays' latest counts */
+  const shop=OPS.shopping(S.d.props,S.d.stock,C()).filter(x=>inS(x.property_id));
+  if(shop.length)m.append(card('To buy',String(shop.length),shop.map(x=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,`${x.item} × ${x.need}`),h('span',null,`${nm(x.property_id)} · ${x.have} of ${x.min}`))))))}
+function reviewScreen(m,u){const open=u.rev.filter(x=>x.status==='open'),asked=u.rev.filter(x=>x.status==='asked'),rate=toRate(u),hist=u.rev.filter(x=>(x.status==='received'&&x.row&&+x.row.rating>0)||x.status==='missed').slice(-12).reverse();
+  m.append(h('p',{class:'hint'},`${C().channels.join(', ')} guests can leave a review for ${C().window} days after check-out. Ask them, then tick it here. Once your admin confirms it arrived, add the stars it got.`));
+  if(rate.length)m.append(card('Add the stars',String(rate.length),rate.map(x=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,`${x.booking.guest||'Guest'} · ${nm(x.property_id)}`),h('span',null,`out ${fmtD(x.check_out)} · confirmed by admin`)),
+    h('button',{class:'btn sm primary',onclick:()=>rateForm(x)},T('Rating'))))));
+  m.append(card('Ask for a review',open.length?String(open.length):'',open.length?open.map(x=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,`${x.booking.guest||'Guest'} · ${nm(x.property_id)}`),h('span',null,`out ${fmtD(x.check_out)} · ${x.left} day${x.left===1?'':'s'} left`)),
+      h('button',{class:'btn sm primary',onclick:()=>askedReview(x)},T('I asked')))):h('div',{class:'empty'},'No reviews to ask for right now.')));
+  m.append(card('Waiting for admin',asked.length?String(asked.length):'',asked.length?asked.map(x=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,`${x.booking.guest||'Guest'} · ${nm(x.property_id)}`),h('span',null,`asked ${x.row&&x.row.asked_at?fmtD(x.row.asked_at):''} · ${x.left} day${x.left===1?'':'s'} left`)),h('span',{class:'pill p-acc'},'Asked'))):h('div',{class:'empty'},'Nothing waiting.')));
+  if(hist.length)m.append(card('Recent',null,hist.map(x=>{const r=x.row||{},low=r.low==='Yes';return h('div',{class:'row'},h('div',{class:'t'},h('b',null,`${x.booking.guest||'Guest'} · ${nm(x.property_id)}`),h('span',null,'out '+fmtD(x.check_out)+(r.review_text?' · “'+String(r.review_text).slice(0,60)+'”':''))),
+    x.status==='received'?h('button',{class:'pill '+(low?'p-bad':'p-ok'),onclick:()=>rateForm(x),'aria-label':'Change rating'},'★ '+r.rating):h('span',{class:'pill p-bad'},'Missed'))})))}
+function issueScreen(m){const mine=S.d.maint.filter(x=>inS(x.property_id)).sort((a,b)=>String(b.reported_on||'').localeCompare(String(a.reported_on||''))).slice(0,30),cl=(S.d.claims||[]).slice().sort((a,b)=>String(b.submitted_at).localeCompare(String(a.submitted_at)));
+  m.append(h('div',{class:'chips'},h('button',{class:'btn primary',onclick:issueForm},T('Report an issue')),h('button',{class:'btn',onclick:claimForm},T('Log an expense'))));
+  const st=x=>x.status==='Pending approval'?['Waiting for admin','p-acc']:x.status==='Rejected'?['Not taken up','p-bad']:/^closed$/i.test(x.status||'')?['Fixed','p-ok']:[x.status||'Open','p-warn'];
+  m.append(card('Issues at your stays',String(mine.length),mine.length?mine.map(x=>{const[l,c]=st(x);return h('div',{class:'row'},h('div',{class:'t'},h('b',null,x.issue),h('span',null,`${nm(x.property_id)} · ${/whatsapp/i.test(x.source||'')?'from a guest':/manager/i.test(x.source||'')?'you reported':'team'} · ${x.reported_on?fmtD(x.reported_on):''}${x.assigned_to?' · '+x.assigned_to:''}`)),h('span',{class:'pill '+c},T(l)))}):h('div',{class:'empty'},'No issues.')));
+  {const mc=moneyCard();if(mc)m.append(mc)}
+  m.append(card('My expense claims',cl.length?String(cl.length):'',cl.length?cl.map(c=>h('div',{class:'row'},h('div',{class:'t'},h('b',null,`${c.category||'Expense'} · ${inr(c.amount)}`),h('span',null,`${nm(c.property_id)} · ${c.date?fmtD(c.date):''}${c.settled_via?' · paid back by '+c.settled_via:''}${c.decision_note?' · '+c.decision_note:''}`)),
+    h('span',{class:'pill '+(c.status==='rejected'?'p-bad':c.status==='approved'?'p-ok':'p-acc')},T(c.status==='rejected'?'Not approved':c.status==='approved'?(c.outcome==='settled'?'Settled':'Approved'):'Waiting')))):h('div',{class:'empty'},'No claims yet. Log what you paid for a stay and attach the receipt.')))}
+/* ============ forms ============ */
+function sheet(title,...body){const esc=e=>{if(e.key==='Escape'&&w.isConnected&&w===[...document.querySelectorAll('.sheet')].pop())close()},close=()=>{w.remove();removeEventListener('keydown',esc)};addEventListener('keydown',esc);const w=h('div',{class:'sheet',onclick:e=>{if(e.target===w)close()}},h('div',{class:'in',role:'dialog','aria-modal':'true','aria-label':title},h('h3',null,title,h('button',{class:'x','aria-label':'Close',onclick:close},'✕')),...body));document.body.append(w);return close}
+/* photos: resized on the phone (longest side 1280 px, JPEG) before upload, so they go fast on mobile data */
+function shrink(file){return new Promise((ok,no)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+  c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',0.72).split(',')[1])};im.onerror=()=>no(new Error('not an image'));im.src=u})}
+function picker(list,label,slot){const box=h('div',{class:'pics'}),fi=h('input',{type:'file',accept:'image/*',capture:'environment',multiple:true,hidden:true});
+  const mine=()=>list.filter(x=>(x.slot||null)===(slot||null));
+  const draw=()=>box.replaceChildren(...mine().map((x,j,all)=>h('img',{src:x.preview,alt:'Photo',onclick:()=>photoViewer(all.map(y=>y.preview),j,'Your photo')})),h('button',{type:'button',class:'addpic','aria-label':label||'Add photo',onclick:()=>fi.click()},'+'),fi);
+  fi.addEventListener('change',async()=>{for(const f of fi.files){try{const b64=await shrink(f);list.push({b64,preview:'data:image/jpeg;base64,'+b64,slot:slot||null})}catch(e){toast('That file isn’t a photo')}}fi.value='';draw()});draw();return box}
+const strip=list=>list.map(x=>({b64:x.b64,slot:x.slot||null}));
+/* one item on the checklist / stock screens: the control, a camera (photos kept with the item's name as their slot)
+   and a comment. need = a photo is required for it. */
+function itemCard(it,ctl,photos,notes,need,sub){const fi=h('input',{type:'file',accept:'image/*',capture:'environment',multiple:true,hidden:true}),thumbs=h('div',{class:'ci-pics'});
+  const mine=()=>photos.filter(p=>p.slot===it.name),note=h('input',{class:'ci-note',placeholder:T('Add a comment'),maxlength:200,value:notes[it.name]||'',hidden:!notes[it.name]||null,oninput:e=>{notes[it.name]=e.target.value}});
+  const cam=h('button',{type:'button',class:'ci-b','aria-label':T('Add a photo')+' · '+it.name,onclick:()=>fi.click()},icon('cam')),cm=h('button',{type:'button',class:'ci-b','aria-label':T('Add a comment')+' · '+it.name,onclick:()=>{note.hidden=false;note.focus()}},icon('note'));
+  const draw=()=>{const ps=mine();thumbs.replaceChildren(...ps.map(p=>h('span',{class:'ci-th'},h('img',{src:p.preview,alt:'',onclick:()=>photoViewer(ps.map(x=>x.preview),ps.indexOf(p),'Your photo')}),h('button',{type:'button','aria-label':T('Remove photo'),onclick:()=>{photos.splice(photos.indexOf(p),1);draw()}},'×'))));
+    cam.classList.toggle('has',ps.length>0);cam.replaceChildren(...[icon('cam'),ps.length?h('b',null,String(ps.length)):null].filter(Boolean));card.classList.toggle('need',!!need&&!ps.length)};
+  fi.addEventListener('change',async()=>{for(const f of fi.files){try{const b64=await shrink(f);photos.push({b64,preview:'data:image/jpeg;base64,'+b64,slot:it.name})}catch(e){toast(T('That file isn’t a photo'))}}fi.value='';draw()});
+  const card=h('div',{class:'ci'},h('div',{class:'ci-top'},ctl,h('div',{class:'ci-t'},h('b',null,it.name),sub?h('small',null,sub):null,need?h('small',{class:'ci-req'},T('Photo needed')):null),h('div',{class:'ci-acts'},cm,cam,fi)),note,thumbs);
+  card._draw=draw;draw();return card}
+function stepper(v0,onv,label){let v=v0;const inp=h('input',{type:'number',inputmode:'numeric',min:0,placeholder:'–',value:v??'','aria-label':label,oninput:e=>{v=e.target.value===''?null:Math.max(0,+e.target.value);onv(v)}});
+  const step=d=>{v=Math.max(0,(v??0)+d);inp.value=v;onv(v)};
+  return h('div',{class:'stp'},h('button',{type:'button','aria-label':'−1',onclick:()=>step(-1)},'−'),inp,h('button',{type:'button','aria-label':'+1',onclick:()=>step(1)},'+'))}
+function progress(){const bar=h('i'),txt=h('small');return{el:h('div',{class:'prog'},h('div',{class:'prog-b'},bar),txt),set:(n,t)=>{bar.style.width=(t?Math.round(n/t*100):0)+'%';txt.textContent=`${n} ${T('of')} ${t} ${T('done')}`}}}
+function checklistForm(b){const c=C(),items=OPS.checkItemsFor(c,b.property_id,S.d.props),slots=c.photoSlots,state={},photos=[],inotes={},notes=h('textarea',{rows:3,placeholder:T('Anything else to report? (optional)')}),err=h('div',{class:'err',hidden:true}),save_=h('button',{class:'btn primary full'},T('Submit checklist'));
+  const pr=progress(),upd=()=>pr.set(items.filter(it=>OPS.checkDone(it,state[it.name])).length,items.length);
+  const cards=items.map(it=>{let card;
+    const ctl=it.type==='count'?stepper(null,v=>{state[it.name]=v;card.classList.toggle('on',OPS.checkDone(it,v));upd()},it.name)
+      :h('button',{type:'button',class:'tk','aria-pressed':'false','aria-label':it.name,onclick:e=>{state[it.name]=!state[it.name];e.currentTarget.setAttribute('aria-pressed',state[it.name]?'true':'false');card.classList.toggle('on',state[it.name]);upd()}},icon('tick'));
+    card=itemCard(it,ctl,photos,inotes,it.photo,it.type==='count'&&it.expect?`${T('should be')} ${it.expect}`:null);if(it.type==='count')card.classList.add('count');return card});upd();
+  const rooms=slots.length?h('div',{class:'form'},h('h4',{class:'sub'},T('Room photos')),...slots.map(sl=>h('label',null,sl,picker(photos,'Add a photo of '+sl,sl)))):null;
+  const anyPic=!slots.length&&!items.some(i=>i.photo)?h('div',{class:'form'},h('label',null,T('Photos (at least one)'),picker(photos,'Add a photo'))):null;
+  const close=sheet(T('Checklist')+' · '+nm(b.property_id),h('p',{class:'hint'},`${b.guest||'Guest'} ${T('checked out')} ${fmtD(b.check_out)}. ${T('Tick or count each item. Tap the camera for a photo, the speech bubble for a comment.')}`),
+    pr.el,h('div',{class:'ci-list'},...cards),rooms,anyPic,h('div',{class:'form'},h('label',null,T('Notes'),notes),err,save_));
+  save_.addEventListener('click',async()=>{const needItem=items.filter(i=>i.photo&&!photos.some(p=>p.slot===i.name)).map(i=>i.name),noRoom=slots.filter(sl=>!photos.some(p=>p.slot===sl));
+    const noPic=[...needItem,...noRoom,...(!slots.length&&!items.some(i=>i.photo)&&!photos.length?[T('the rooms')]:[])];
+    if(noPic.length){err.hidden=false;err.textContent=T('Add a photo of')+': '+noPic.join(', ');cards.forEach(c_=>c_._draw());return}
+    const missing=items.filter(i=>!OPS.checkDone(i,state[i.name])).map(i=>i.type==='count'&&state[i.name]!=null?`${i.name} (${state[i.name]}${i.expect?' of '+i.expect:''})`:i.name);
+    if(missing.length&&!save_.dataset.ok){save_.dataset.ok='1';err.hidden=false;err.textContent=`${missing.length} ${T('not done')}: ${missing.join(', ')}. ${T('They go to your admin as an issue. Tap Submit again to send it like this.')}`;return}
+    save_.disabled=true;save_.textContent=T('Checking location…');const geo=await geoFields(err);if(!geo){save_.disabled=false;save_.textContent=T('Submit checklist');return}save_.textContent='Saving…';
+    const vals=Object.fromEntries(items.map(i=>[i.name,i.type==='count'?(state[i.name]??null):!!state[i.name]])),cm=Object.fromEntries(Object.entries(inotes).map(([k,v])=>[k,String(v||'').trim()]).filter(([,v])=>v));
+    const ok=await write('append','checklists',{row:{check_id:'CK'+Date.now().toString(36),booking_id:b.booking_id,property_id:b.property_id,items:JSON.stringify(vals),item_notes:Object.keys(cm).length?JSON.stringify(cm):null,notes:notes.value.trim()||null,done_at:nowIso(),...geo}},'Checklist sent',
+      {photos:strip(photos),kind:'checklist',name:nm(b.property_id)+' '+b.booking_id});
+    if(!ok){save_.disabled=false;save_.textContent=T('Submit checklist');return}
+    /* what wasn't done becomes an issue for the admin to approve */
+    if(missing.length)await write('append','maintenance',{row:{ticket_id:'MR'+Date.now().toString(36).toUpperCase(),property_id:b.property_id,issue:'Checklist not done: '+missing.join(', ').slice(0,180),priority:'Medium',reported_on:TODAY,reported_at:Math.floor(Date.now()/1000),booking_id:b.booking_id,...geo}},'Issue sent to admin');
+    if(!(S.d.turnovers||[]).some(t=>String(t.booking_id)===b.booking_id))write('append','turnovers',{row:{booking_id:b.booking_id,status:'Done',done_at:nowIso(),done_by:S.me&&S.me.name||''}},'Marked clean');
+    close();ok==='sent'?load():render()})}
+function stockForm(pid){const c=C(),items=OPS.stockItemsFor(c,pid,S.d.props),last=OPS.stockTrend(S.d.stock,pid,4),vals={},photos=[],inotes={},err=h('div',{class:'err',hidden:true}),issues=h('textarea',{rows:2,placeholder:T('Anything else broken, missing or running low?')}),save_=h('button',{class:'btn primary full'},T('Submit stock check'));
+  const pr=progress(),upd=()=>pr.set(items.filter(i=>vals[i.name]!=null).length,items.length);
+  const cards=items.map(it=>{let card;const hist=last.map(r=>r.counts[it.name]).filter(x=>x!=null);
+    const sub=[it.type!=='ok'&&it.min?`${T('min')} ${it.min}`:null,hist.length?`${T('last')}: ${hist.join(' · ')}`:null].filter(Boolean).join(' · ')||null;
+    let ctl;if(it.type==='ok'){const yn=h('div',{class:'yn'}),draw=()=>yn.replaceChildren(...[['Yes',true],['No',false]].map(([l,v])=>h('button',{type:'button','aria-pressed':vals[it.name]===v?'true':'false',onclick:()=>{vals[it.name]=v;draw();card.classList.toggle('on',v===true);card.classList.toggle('bad',v===false);upd()}},T(l))));draw();ctl=yn}
+    else ctl=stepper(null,v=>{vals[it.name]=v;const low=it.min&&v!=null&&v<it.min;card.classList.toggle('on',v!=null&&!low);card.classList.toggle('bad',!!low);upd()},it.name);
+    card=itemCard(it,ctl,photos,inotes,it.photo,sub);card.classList.add(it.type==='ok'?'yesno':'count');return card});upd();
+  const close=sheet(T('Stock check')+' · '+nm(pid),h('p',{class:'hint'},T('Count what is there now. Anything “No” or below its minimum goes to your admin.')),pr.el,h('div',{class:'ci-list'},...cards),
+    h('div',{class:'form'},h('label',null,T('Issues found'),issues),h('label',null,T('Other photos (optional)'),picker(photos)),err,save_));
+  save_.addEventListener('click',async()=>{const miss=items.filter(i=>vals[i.name]==null);if(miss.length){err.hidden=false;err.textContent=T('Fill in')+': '+miss.map(i=>i.name).join(', ');return}
+    const needItem=items.filter(i=>i.photo&&!photos.some(p=>p.slot===i.name)).map(i=>i.name);if(needItem.length){err.hidden=false;err.textContent=T('Add a photo of')+': '+needItem.join(', ');cards.forEach(c_=>c_._draw());return}
+    save_.disabled=true;save_.textContent=T('Checking location…');const geo=await geoFields(err);if(!geo){save_.disabled=false;save_.textContent=T('Submit stock check');return}save_.textContent='Saving…';
+    const bad=items.filter(i=>i.type==='ok'&&vals[i.name]===false).map(i=>i.name),cm=Object.fromEntries(Object.entries(inotes).map(([k,v])=>[k,String(v||'').trim()]).filter(([,v])=>v));
+    const ok=await write('append','stock',{row:{stock_id:'SK'+Date.now().toString(36),property_id:pid,counts:JSON.stringify(vals),item_notes:Object.keys(cm).length?JSON.stringify(cm):null,issues:[bad.length?'Not working: '+bad.join(', '):null,issues.value.trim()||null].filter(Boolean).join(' · ')||null,done_at:nowIso(),...geo}},'Stock check sent',
+      photos.length?{photos:strip(photos),kind:'checklist',name:nm(pid)+' stock'}:null);
+    if(!ok){save_.disabled=false;save_.textContent=T('Submit stock check');return}
+    if(bad.length)await write('append','maintenance',{row:{ticket_id:'MR'+Date.now().toString(36).toUpperCase(),property_id:pid,issue:'Not working: '+bad.join(', ')+(bad.some(x=>cm[x])?' ('+bad.filter(x=>cm[x]).map(x=>x+': '+cm[x]).join('; ')+')':''),priority:'Medium',reported_on:TODAY,reported_at:Math.floor(Date.now()/1000),...geo}},'Issue sent to admin');
+    close();ok==='sent'?load():render()})}
+async function askedReview(x){const ok=x.row?await write('update','reviews',{match:{booking_id:x.booking.booking_id},fields:{status:'asked',asked_at:nowIso(),asked_by:S.me&&S.me.name||''}},'Marked as asked')
+  :await write('append','reviews',{row:{booking_id:x.booking.booking_id,property_id:x.property_id,check_out:x.check_out,channel:x.booking.channel,status:'asked',asked_at:nowIso(),asked_by:S.me&&S.me.name||''}},'Marked as asked');if(ok==='sent')load();else if(ok)render()}
+/* after the admin confirms the review arrived: the stars it got (3 or less is logged as low) and what the guest wrote */
+function rateForm(x){const r=x.row||{};let n=+r.rating||0;const box=h('div',{class:'stars'}),draw=()=>box.replaceChildren(...[1,2,3,4,5].map(k=>h('button',{type:'button','aria-label':k+' stars','aria-pressed':k<=n,onclick:()=>{n=k;draw();lowN.hidden=!(n&&n<=C().lowAt)}},'★')));
+  const txt=h('textarea',{rows:3,value:r.review_text||'',placeholder:'e.g. Lovely views, geyser was slow'}),lowN=h('p',{class:'err',hidden:!(n&&n<=C().lowAt)},`${C().lowAt} stars or less is flagged to your admin as a low rating.`),err=h('div',{class:'err',hidden:true}),save_=h('button',{class:'btn primary full'},T('Save rating'));draw();
+  const close=sheet(T('Rating')+' · '+(x.booking.guest||'Guest'),h('p',{class:'hint'},`${nm(x.property_id)} · out ${fmtD(x.check_out)} · ${x.booking.channel||''}`),h('div',{class:'form'},box,lowN,h('label',null,T('What the guest wrote (optional)'),txt),err,save_));
+  save_.addEventListener('click',async()=>{if(!n){err.hidden=false;err.textContent='Tap the stars it got.';return}save_.disabled=true;
+    const ok=await write('update','reviews',{match:{booking_id:x.booking.booking_id},fields:{rating:n,review_text:txt.value.trim()||null}},'Rating saved');if(!ok){save_.disabled=false;return}close();ok==='sent'?load():render()})}
+const staySel=()=>h('select',null,[...myStays()].filter(pid=>P(pid).property_id).map(pid=>h('option',{value:pid},nm(pid))));
+function issueForm(){const st=staySel(),is=h('input',{placeholder:'e.g. Geyser not heating in the upper bathroom'}),pr=h('select',null,h('option',{value:'High'},T('Urgent')),h('option',{value:'Medium',selected:true},T('Soon')),h('option',{value:'Low'},T('Routine'))),photos=[],err=h('div',{class:'err',hidden:true}),save_=h('button',{class:'btn primary full'},T('Send to admin'));
+  const close=sheet(T('Report an issue'),h('div',{class:'form'},h('label',null,T('Stay'),st),h('label',null,T('What’s wrong'),is),h('label',null,T('How soon'),pr),h('label',null,'Photo (optional)',picker(photos)),h('p',{class:'hint'},'Your admin approves it before it goes on the repairs board.'),err,save_));
+  save_.addEventListener('click',async()=>{if(!is.value.trim()){err.hidden=false;err.textContent='Say what’s wrong.';return}save_.disabled=true;
+    const geo=await geoFields(err);if(!geo){save_.disabled=false;return}
+    const ok=await write('append','maintenance',{row:{ticket_id:'MR'+Date.now().toString(36).toUpperCase(),property_id:st.value,issue:is.value.trim(),priority:pr.value,reported_on:TODAY,reported_at:Math.floor(Date.now()/1000),...geo}},'Sent to admin',
+      photos.length?{photos:strip(photos),kind:'checklist',name:nm(st.value)+' issue'}:null);
+    if(ok){close();ok==='sent'?load():render()}else save_.disabled=false})}
+function claimForm(){const st=staySel(),dt=h('input',{type:'date',value:TODAY}),cat=h('select',null,['Repairs','Cleaning','Supplies','Laundry','Groceries','Transport','Other'].map(c=>h('option',null,c))),amt=h('input',{type:'number',inputmode:'decimal',min:1,placeholder:'e.g. 850'}),
+    note=h('input',{placeholder:'e.g. Tap washer and plumber visit'}),photos=[],err=h('div',{class:'err',hidden:true}),save_=h('button',{class:'btn primary full'},T('Send claim'));
+  const close=sheet(T('Log an expense'),h('div',{class:'form'},h('label',null,T('Stay'),st),h('label',null,T('Date'),dt),h('label',null,T('Category'),cat),h('label',null,T('Amount (₹)'),amt),h('label',null,T('What it was'),note),h('label',null,T('Receipt photo'),picker(photos,'Add the receipt')),h('p',{class:'hint'},'Your admin approves it, then pays you back.'),err,save_));
+  save_.addEventListener('click',async()=>{if(!(+amt.value>0)){err.hidden=false;err.textContent='Add the amount.';return}if(!note.value.trim()){err.hidden=false;err.textContent='Say what it was for.';return}
+    /* the same amount in the last few days is probably the same bill */
+    const dup=(S.d.claims||[]).find(c=>+c.amount===+amt.value&&c.status!=='rejected'&&Math.abs(OPS.dayDiff(String(c.date||c.submitted_at).slice(0,10),dt.value))<=3);
+    if(dup&&!save_.dataset.ok){save_.dataset.ok='1';err.hidden=false;err.textContent=`You sent ${inr(dup.amount)} on ${fmtD(dup.date||dup.submitted_at)} already (${dup.note||dup.category}). Tap Send again if this is a different bill.`;return}
+    save_.disabled=true;
+    const ok=await write('append','claims',{row:{claim_id:'CL'+Date.now().toString(36).toUpperCase(),property_id:st.value,date:dt.value,category:cat.value,amount:+amt.value,note:note.value.trim(),submitted_at:nowIso()}},'Claim sent',
+      photos.length?{photos:strip(photos),kind:'checklist',name:nm(st.value)+' receipt'}:null);
+    if(ok){close();ok==='sent'?load():render()}else save_.disabled=false})}
+const OPENC={};
+function openNews(){const cats=news(),since=seenAt(),w=t=>{const d=new Date(String(t).replace(' ','T'));return isNaN(d)?'':d.toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})};
+  const close=sheet(T("What's new"),h('p',{class:'hint'},'Since '+w(since)),...(cats.length?cats.map(c=>h('div',{class:'news-c'},h('b',null,c.label,h('span',null,c.items.length)),...c.items.slice(0,OPENC[c.key]?99:4).map(it=>h('div',{class:'news-i'},h('span',null,it.title),h('small',null,[it.sub,w(it.at)].filter(Boolean).join(' · ')))),
+      c.items.length>4?h('button',{class:'btn sm',onclick:()=>{OPENC[c.key]=!OPENC[c.key];close();openNews()}},OPENC[c.key]?'Show fewer':'Show all '+c.items.length):null)):[h('div',{class:'empty'},T('Nothing new since you last looked.'))]),
+    cats.length?h('button',{class:'btn primary full',onclick:()=>{const at=new Date().toISOString();store.set(SEEN,at);if(S.me)S.me.seen_at=at;api({action:'seen',at}).catch(()=>{});close();render()}},T('Mark all seen')):null)}
+function openMenu(){const close=sheet(T('Menu'),h('div',{class:'form'},h('p',{class:'hint'},`Signed in as ${S.me&&S.me.name||''}${S.me&&S.me.login?' ('+S.me.login+')':''}. Data from ${S.d&&S.d.at?new Date(S.d.at).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}):'–'}.`),
+  S.q?h('p',{class:'hint'},`${S.q} ${T('waiting to send')}.`):null,langBtn(),
+  h('button',{class:'btn full',onclick:()=>{close();leaveSheet()}},icon('today'),T('Leave')),
+  h('button',{class:'btn full',onclick:()=>{close();helpSheet()}},T('Help')),
+  h('button',{class:'btn full',onclick:()=>{close();flush();load();toast('Refreshing…')}},icon('sync'),T('Refresh now')),h('button',{class:'btn full',onclick:()=>{close();signOut()}},T('Sign out'))))}
+/* ============ start ============ */
+document.documentElement.lang=LANG;
+render();if(S.key){queued().then(()=>{flush();load()})}
+setInterval(()=>{if(S.key&&!document.hidden&&!S.busy){flush();load()}},3*60*1000);
+addEventListener('online',()=>{if(S.key)flush()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.key&&S.d&&Date.now()-S.d.at>60000){flush();load()}});
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
