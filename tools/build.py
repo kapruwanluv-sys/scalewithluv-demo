@@ -34,6 +34,21 @@ subprocess.run([sys.executable, "-I", str(HD / "scripts/build.py"), str(cdir), "
 (SITE / "console").mkdir()
 for f in ("index.html", "tiers.js", "releases.js"):
     shutil.copy(CON / f, SITE / "console" / f)
+# the demo is shown to prospects: take out Luv's own costs and margins (hosting, AI at cost, margin %)
+con = (SITE / "console/index.html").read_text(encoding="utf-8")
+cuts = [(r"\(x=>h\('div',null,h\('h3',null,'Margin this month'\).*?\)\(marginOf\(st\)\),", "null,"),
+        (r"kpi\('Margin this month',num\('home:mg',mg,'inr'\)\),", ""),
+        (r",\(x=>x\.pct!=null\?h\('small',\{class:'mg-pct '.*?\)\(marginOf\(st\)\)\]", "]")]
+for rx, to in cuts:
+    con, n = re.subn(rx, to, con, count=1, flags=re.S)
+    assert n == 1, "console changed, update the demo cut: " + rx[:40]
+assert "Margin" not in con and "% margin" not in con, "a margin figure is still shown"
+con = con.replace("K=SWL.COSTS||{hosting_inr:625,ai_markup_pct:5}", "K=SWL.COSTS||{hosting_inr:0,ai_markup_pct:0}")
+tj = (SITE / "console/tiers.js").read_text(encoding="utf-8")
+tj, n = re.subn(r"\n\s*//[^\n]*\n\s*const COSTS = \{[^}]*\};", "\n  const COSTS = {hosting_inr: 0, ai_markup_pct: 0};", tj)
+assert n == 1 and "625" not in con + tj and "markup the bot" not in tj, "own costs still in the demo console"
+(SITE / "console/tiers.js").write_text(tj, encoding="utf-8", newline="\n")
+(SITE / "console/index.html").write_text(con, encoding="utf-8", newline="\n")
 shutil.copytree(CON / "img", SITE / "console/img", ignore=shutil.ignore_patterns("jabula*"))
 color = ["#1d5bd8", "#0f8a6a", "#b4462f"]
 names = ["Pinewood Stays", "Parvati Valley Homes", "Ridge & Pine Shimla"]
